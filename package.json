@@ -2,7 +2,7 @@
   "name": "epoch-updater",
   "productName": "epoch-updater",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -26,7 +26,14 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "epoch_updater"
+            "setupIcon": "./assets/epoch.ico",
+            "title": "Project Epoch Updater",
+            "name": "ProjectEpochUpdater",
+            "authors": "Project Epoch",
+            "description": "The Game Client Updater for Project Epoch.",
+            "exe": "epoch-updater.exe",
+            "setupExe": "epoch-installer.exe",
+            "iconUrl": "https://cdn.project-epoch.net/media/updater/epoch.ico"
           }
         },
         {

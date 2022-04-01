@@ -24,7 +24,6 @@ export class Window {
 
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
-        this.window.webContents.openDevTools();
 
         return this;
     }
