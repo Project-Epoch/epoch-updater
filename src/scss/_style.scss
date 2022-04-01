@@ -1,6 +1,24 @@
+.app-background {
+    background-color: #2C2F33;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: auto;
-    max-width: 38rem;
-    padding: 2rem;
+    -webkit-app-region: drag;
+    background: url('https://cdn.project-epoch.net/media/updater/background.jpg');
+}
+
+button {
+    -webkit-app-region: no-drag;
+}
+
+.titlebar {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-app-region: drag;
+}
+
+.fixed-row-bottom {
+    position:fixed;
+    bottom:0;
+    width:100%;
 }
