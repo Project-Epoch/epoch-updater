@@ -1,4 +1,5 @@
 import { BrowserWindow } from "electron";
+import path from 'path';
 
 /**
  * Used to both Create and Access the Browser Window.
@@ -10,12 +11,15 @@ export class Window {
      * Actually creates the Window for later use.
      * @param entrypoint Typically the Webpack Main entry.
      */
-    public create(entrypoint: string) {
+    public create(entrypoint: string, preloader: string) {
         this.window = new BrowserWindow({
             width: 1280,
             height: 720,
             resizable: false,
             maximizable: false,
+            webPreferences: {
+                preload: preloader,
+            }
         });
 
         this.window.loadURL(entrypoint);
