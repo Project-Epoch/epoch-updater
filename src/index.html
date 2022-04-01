@@ -12,6 +12,27 @@
         <div class="container-fluid">
             <!-- Header / Nav -->
             <div class="row">
+                <!-- Window Controls -->
+                <div class="position-relative">
+                    <div class="position-absolute top-0 end-0">
+                        <ul class="nav">
+                            <!-- Minimize -->
+                            <li class="nav-item">
+                                <a class="nav-link text-muted window-control" id="window-minize">
+                                    <i class="fa-solid fa-minus"></i>
+                                </a>
+                            </li>
+
+                            <!-- Close -->
+                            <li class="nav-item">
+                                <a class="nav-link text-muted window-control" id="window-close">
+                                    <i class="fa-solid fa-times"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="col-6">
                     <img src="https://cdn.project-epoch.net/media/updater/logo.png" class="rounded float-start">
                 </div>
@@ -20,21 +41,21 @@
                     <ul class="nav mt-5 mx-5 float-end">
                         <!-- Blog Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-light fs-2"  href="https://blog.project-epoch.net/" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Blog">
+                            <a class="nav-link text-light nav-button fs-2"  href="https://blog.project-epoch.net/" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Blog">
                                 <i class="fa-solid fa-blog"></i>
                             </a>
                         </li>
 
                         <!-- Discord -->
                         <li class="nav-item">
-                            <a class="nav-link text-light fs-2" href="https://discord.gg/dKNUv3Wag8" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discord">
+                            <a class="nav-link text-light nav-button fs-2" href="https://discord.gg/dKNUv3Wag8" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discord">
                                 <i class="fa-brands fa-discord"></i>
                             </a>
                         </li>
 
                         <!-- YouTube Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-light fs-2" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw" data-bs-toggle="tooltip" data-bs-placement="bottom" title="YouTube">
+                            <a class="nav-link text-light nav-button fs-2" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw" data-bs-toggle="tooltip" data-bs-placement="bottom" title="YouTube">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
                         </li>
@@ -45,15 +66,19 @@
             <!-- Images Section. -->
             <div class="row">
                 <div class="col-12">
-                    <div class="card" style="min-height: 320px;">
+                    <div class="card news-card border-dark blur">
                         <div class="row g-0">
                             <div class="col-md-8">
                                 <img src="https://cdn.project-epoch.net/media/updater/orc-v-human.jpg" class="img-fluid rounded-start" alt="Lorem ipsum dolor">
                             </div>
                             <div class="col-md-4">
                                 <div class="card-body">
-                                    <h5 class="card-title">Lorem ipsum dolor</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
+                                    <h3 class="card-title text-white mb-4">Lorem ipsum dolor</h3>
+                                    <p class="card-text text-warning">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.<br><br>
+                                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<br><br>
+                                        Excepteur sint occaecat cupidatat non proident.
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -65,17 +90,16 @@
             <div class="row fixed-row-bottom">
                 <div class="col-9">
                     <div class="progress-text">
-                        <span class="text-white">Getting Patch Manifest...</span>
+                        <span class="text-light">Getting Patch Manifest...</span>
+                        <span class="text-light float-end">75%</span>
                     </div>
 
-                    <div class="progress mt-1">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%">
-                            75%
-                        </div>
+                    <div class="progress mt-1 rounded-0">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
                     </div>
                 </div>
                 <div class="col-3">
-                    <button type="button" class="btn btn-primary btn-lg mb-4 px-5 float-end" disabled>Initialising</button>
+                    <button type="button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" disabled>Initialising</button>
                 </div>
             </div>
         </div>

@@ -11,10 +11,33 @@ button {
     -webkit-app-region: no-drag;
 }
 
+a {
+    -webkit-app-region: no-drag;
+}
+
 .titlebar {
     user-select: none;
     -webkit-user-select: none;
     -webkit-app-region: drag;
+}
+
+.news-card {
+    min-height: 320px;
+    border-radius: 0 !important;
+}
+
+.blur {
+    background-color: rgba(0,0,0, 0.4);
+    backdrop-filter: blur(3px);
+}
+
+.window-control {
+    :hover { color: #FFF; }
+    padding-left: 5px;
+}
+
+.nav-button {
+    :hover { color: #ffc107; }
 }
 
 .fixed-row-bottom {

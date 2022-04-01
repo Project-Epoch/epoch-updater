@@ -17,10 +17,6 @@ export class Window {
             resizable: false,
             maximizable: false,
             titleBarStyle: 'hidden',
-            titleBarOverlay: {
-                color: '#2f3241',
-                symbolColor: '#74b1be'
-            },
             webPreferences: {
                 preload: preloader,
             }
@@ -28,7 +24,7 @@ export class Window {
 
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
-        // this.window.webContents.openDevTools();
+        this.window.webContents.openDevTools();
 
         return this;
     }
