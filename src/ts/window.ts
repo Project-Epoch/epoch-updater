@@ -1,5 +1,4 @@
 import { BrowserWindow } from "electron";
-import path from 'path';
 
 /**
  * Used to both Create and Access the Browser Window.
