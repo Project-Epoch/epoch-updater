@@ -10,12 +10,13 @@ export class Window {
      * Actually creates the Window for later use.
      * @param entrypoint Typically the Webpack Main entry.
      */
-    public create(entrypoint: string, preloader: string) {
+    public create(entrypoint: string, preloader: string): Window {
         this.window = new BrowserWindow({
-            width: 1280,
-            height: 720,
+            width: 1010,
+            height: 680,
             resizable: false,
             maximizable: false,
+            titleBarStyle: 'hidden',
             webPreferences: {
                 preload: preloader,
             }
@@ -23,6 +24,9 @@ export class Window {
 
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
+        this.window.webContents.openDevTools();
+
+        return this;
     }
 
     /**
