@@ -19,8 +19,7 @@ export class Window {
         });
 
         this.window.loadURL(entrypoint);
-
-        this.window.setMenu(null);
+        this.window.setMenuBarVisibility(false);
     }
 
     /**
