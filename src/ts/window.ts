@@ -17,13 +17,22 @@ export class Window {
             resizable: false,
             maximizable: false,
             titleBarStyle: 'hidden',
+            show: false,
             webPreferences: {
+                nodeIntegration: false,
+                contextIsolation: true,
                 preload: preloader,
             }
         });
 
+        this.window.once('ready-to-show', () => {
+            this.window.show();
+        });
+
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
+
+        this.window.webContents.openDevTools({ mode: 'detach' });
 
         return this;
     }
