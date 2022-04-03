@@ -18,6 +18,8 @@ export class Window {
             maximizable: false,
             titleBarStyle: 'hidden',
             webPreferences: {
+                nodeIntegration: false,
+                contextIsolation: false,
                 preload: preloader,
             }
         });
