@@ -1,4 +1,4 @@
-import { app, ipcMain } from "electron";
+import { app, ipcMain, shell } from "electron";
 import { WindowManager } from "./window";
 
 /**
@@ -20,6 +20,7 @@ class Main {
     registerIPC() {
         ipcMain.on('window-close', () => { app.quit() });
         ipcMain.on('window-minimize', () => { WindowManager.get().minimize() });
+        ipcMain.on('link-clicked', (event, args) => { shell.openExternal(args); });
     }
 
     /**

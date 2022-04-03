@@ -41,21 +41,21 @@
                     <ul class="nav mt-5 mx-5 float-end">
                         <!-- Blog Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-light nav-button fs-2" href="https://blog.project-epoch.net/" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Blog">
+                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://blog.project-epoch.net/" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Blog">
                                 <i class="fa-solid fa-blog"></i>
                             </a>
                         </li>
 
                         <!-- Discord -->
                         <li class="nav-item">
-                            <a class="nav-link text-light nav-button fs-2" href="https://discord.gg/dKNUv3Wag8" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discord">
+                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://discord.gg/dKNUv3Wag8" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discord">
                                 <i class="fa-brands fa-discord"></i>
                             </a>
                         </li>
 
                         <!-- YouTube Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-light nav-button fs-2" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw" data-bs-toggle="tooltip" data-bs-placement="bottom" title="YouTube">
+                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw" data-bs-toggle="tooltip" data-bs-placement="bottom" title="YouTube">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
                         </li>
@@ -89,13 +89,15 @@
             <!-- Bottom Section. -->
             <div class="row fixed-row-bottom">
                 <div class="col-9">
-                    <div class="progress-text">
-                        <span class="text-light">Getting Patch Manifest...</span>
-                        <span class="text-light float-end">75%</span>
-                    </div>
-
-                    <div class="progress mt-1 rounded-0">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                    <div id="progress-bar" hidden>
+                        <div class="progress-text">
+                            <span class="text-light" id="progress-bar-text">Getting Patch Manifest...</span>
+                            <span class="text-light float-end" id="progress-bar-percentage">75%</span>
+                        </div>
+    
+                        <div class="progress mt-1 rounded-0">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-3">
