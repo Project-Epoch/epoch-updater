@@ -20,7 +20,7 @@ export class Window {
             show: false,
             webPreferences: {
                 nodeIntegration: false,
-                contextIsolation: false,
+                contextIsolation: true,
                 preload: preloader,
             }
         });
@@ -31,6 +31,8 @@ export class Window {
 
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
+
+        this.window.webContents.openDevTools({ mode: 'detach' });
 
         return this;
     }

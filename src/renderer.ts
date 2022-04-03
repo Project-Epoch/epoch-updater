@@ -10,3 +10,14 @@ tooltipTriggerList.map(function (tooltipTriggerEl: any) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
 });
 
+/** Close Button. */
+const closeButton = document.getElementById('window-close');
+closeButton.addEventListener('click', () => {
+    window.windowAPI.close();
+});
+
+/** Minimize Button. */
+const minimizeButton = document.getElementById('window-minimize');
+minimizeButton.addEventListener('click', () => {
+    window.windowAPI.minimize();
+});

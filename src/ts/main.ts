@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, ipcMain } from "electron";
 import { WindowManager } from "./window";
 
 /**
@@ -11,8 +11,15 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 class Main {
     constructor() {
+        this.registerIPC();
+
         app.on('ready', this.onReady);
         app.on('window-all-closed', this.onAllWindowClosed);
+    }
+
+    registerIPC() {
+        ipcMain.on('window-close', () => { app.quit() });
+        ipcMain.on('window-minimize', () => { WindowManager.get().minimize() });
     }
 
     /**
