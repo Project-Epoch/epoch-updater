@@ -54,7 +54,7 @@ module.exports = [
     ]
   },
   {
-    test: /\.(png|jpe?g|gif|ico|svg)$/, // We will handle of these file extensions
+    test: /\.(png|jpeg|jpg|gif|ico|svg)$/, // We will handle of these file extensions
     use: [
       {
         loader: "file-loader",
