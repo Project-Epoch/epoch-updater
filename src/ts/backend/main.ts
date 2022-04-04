@@ -1,4 +1,6 @@
 import { app, ipcMain, shell } from "electron";
+import { ClientManager } from "./client";
+import { UpdateManager, UpdateState } from "./updater";
 import { WindowManager } from "./window";
 
 /**
@@ -18,9 +20,19 @@ class Main {
     }
 
     registerIPC() {
+        ipcMain.on('window-rendered', this.onWindowRendered);
         ipcMain.on('window-close', () => { app.quit() });
         ipcMain.on('window-minimize', () => { WindowManager.get().minimize() });
         ipcMain.on('link-clicked', (event, args) => { shell.openExternal(args); });
+    }
+
+    onWindowRendered() {
+        /** User has either not set directory yet or has moved their client. */
+        if (! ClientManager.hasClientDirectory() || ! ClientManager.isWarcraftDirectory()) {
+            UpdateManager.setState(UpdateState.SETUP);
+
+            return;
+        }
     }
 
     /**
