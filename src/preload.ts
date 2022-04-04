@@ -25,11 +25,11 @@ const navigationAPI: NavigationAPI = {
 
 /** Updater API */
 export type UpdaterAPI = {
-
+    onStateChanged: (callback: (state: string) => void) => void;
 }
 
 const updaterAPI: UpdaterAPI = {
-
+    onStateChanged: (callback: Function) => ipcRenderer.on('update-state-changed', (event, state) => { callback(state); }),
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */

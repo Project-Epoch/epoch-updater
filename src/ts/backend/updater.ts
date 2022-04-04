@@ -1,12 +1,12 @@
 import { WindowManager } from "./window";
 
 export enum UpdateState {
-    NONE,
-    SETUP,
-    GET_MANIFEST,
-    VERIFYING_INTEGRITY,
-    DOWNLOADING,
-    DONE,
+    NONE = 'none',
+    SETUP = 'setup',
+    GET_MANIFEST = 'get-manifest',
+    VERIFYING_INTEGRITY = 'verifying-integrity',
+    DOWNLOADING = 'downloading',
+    DONE = 'done',
 }
 
 export class Updater {
@@ -18,6 +18,8 @@ export class Updater {
 
     setState(state: UpdateState) {
         this.currentState = state;
+
+        console.log('Backend - Updating State: ' + state);
 
         WindowManager.get().webContents.send('update-state-changed', state);
     }
