@@ -25,11 +25,19 @@ const navigationAPI: NavigationAPI = {
 
 /** Updater API */
 export type UpdaterAPI = {
+    refreshState: () => void;
     onStateChanged: (callback: (state: string) => void) => void;
+    onOpenDirectoryPicker: () => void;
+    onValidDirectoryChosen: (callback: () => void) => void;
+    onInvalidDirectoryChosen: (callback: (message: string) => void) => void;
 }
 
 const updaterAPI: UpdaterAPI = {
+    refreshState: () => { ipcRenderer.send('refresh-update-state'); },
     onStateChanged: (callback: Function) => ipcRenderer.on('update-state-changed', (event, state) => { callback(state); }),
+    onOpenDirectoryPicker: () => { ipcRenderer.send('choose-install-directory'); },
+    onValidDirectoryChosen: (callback: Function) => ipcRenderer.on('valid-install-directory-chosen', () => { callback(); }),
+    onInvalidDirectoryChosen: (callback: Function) => ipcRenderer.on('invalid-install-directory-chosen', (event, message) => { callback(message); }),
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */

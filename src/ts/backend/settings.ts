@@ -1,11 +1,17 @@
 import Store, { Schema } from 'electron-store';
 
-/** Needed to give TS hinting. Define settings and type here. */
+/**
+ * Create our Settings Structure with explicit types for TS.
+ */
 interface SettingStructure {
     clientDirectory: string;
 }
 
 /** Actually create the Structure and assign defaults. */
+
+/**
+ * Actually create the Settings Store Structure and assign defaults.
+ */
 const schema: Schema<SettingStructure> = {
     clientDirectory: {
         type: 'string',
@@ -13,7 +19,9 @@ const schema: Schema<SettingStructure> = {
     },
 };
 
-/** Create Wrapper Class. */
+/**
+ * Create Wrapper Class.
+ */
 export class Settings {
     private store: Store<SettingStructure>;
 
@@ -23,10 +31,16 @@ export class Settings {
         });
     }
 
-    storage() {
+    /**
+     * Reference to electron-store.
+     * @returns The electron-store instance.
+     */
+    storage(): Store<SettingStructure> {
         return this.store;
     }
 }
 
-/** Create an Instance of our Wrapper. */
+/**
+ * Create an Instance of our Wrapper.
+ */
 export const SettingsManager = new Settings();
