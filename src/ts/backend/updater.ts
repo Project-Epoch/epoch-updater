@@ -23,6 +23,10 @@ export class Updater {
 
         WindowManager.get().webContents.send('update-state-changed', state);
     }
+
+    getState(): UpdateState {
+        return this.currentState;
+    }
 }
 
 export const UpdateManager = new Updater();

@@ -1,6 +1,22 @@
+import { hide, show } from "./helpers";
+
 export class Updating {
+    private initButton: HTMLElement;
+    private installButton: HTMLElement;
+    private updateButton: HTMLElement;
+    private playButton: HTMLElement;
+
     constructor() {
-        window.updaterAPI.onStateChanged(this.onStateChanged);
+        document.addEventListener('DOMContentLoaded', () => { 
+            /** Button References. */
+            this.initButton = document.getElementById('initialising-button');
+            this.installButton = document.getElementById('install-button');
+            this.updateButton = document.getElementById('update-button');
+            this.playButton = document.getElementById('play-button');
+        });
+
+        /** Register Callbacks. */
+        window.updaterAPI.onStateChanged((state) => { this.onStateChanged(state); });
     }
 
     /**
@@ -8,7 +24,26 @@ export class Updating {
      * the backend.
      * @param state The new state.
      */
-    private onStateChanged(state: string) {
-        console.log('Frontend - State Changed: ' + state);
+    onStateChanged(state: string) {
+        console.log('onStateChanged');
+
+        switch (state) {
+            case 'setup':
+                this.onSetupState();
+                break;
+        
+            default:
+                console.log(`Frontend - Unexpected State: ${state}`);
+                break;
+        }
+    }
+
+    onSetupState() {
+        console.log('onSetupState');
+
+        show(this.installButton);
+        hide(this.initButton);
+        hide(this.updateButton);
+        hide(this.playButton);
     }
 }
