@@ -31,6 +31,7 @@ class Main {
         ipcMain.on('choose-install-directory', () => { 
             ClientManager.chooseDirectory(() => {
                 UpdateManager.setState(UpdateState.GET_MANIFEST);
+                UpdateManager.getManifest();
             });
         });
         ipcMain.on('refresh-update-state', () => { UpdateManager.refresh(); });
@@ -48,6 +49,7 @@ class Main {
 
         /** Otherwise - Go to patching. */
         UpdateManager.setState(UpdateState.GET_MANIFEST);
+        UpdateManager.getManifest();
     }
 
     /**
