@@ -30,6 +30,10 @@ export type UpdaterAPI = {
     onOpenDirectoryPicker: () => void;
     onValidDirectoryChosen: (callback: () => void) => void;
     onInvalidDirectoryChosen: (callback: (message: string) => void) => void;
+
+    onDownloadStart: (callback: (filename: string, total: number, index: number) => void) => void;
+    onDownloadFinished: (callback: () => void) => void;
+    onDownloadProgress: (callback: (total: number, name: string, downloaded: number, progress: number, speed: number) => void) => void;
 }
 
 const updaterAPI: UpdaterAPI = {
@@ -38,6 +42,10 @@ const updaterAPI: UpdaterAPI = {
     onOpenDirectoryPicker: () => { ipcRenderer.send('choose-install-directory'); },
     onValidDirectoryChosen: (callback: Function) => ipcRenderer.on('valid-install-directory-chosen', () => { callback(); }),
     onInvalidDirectoryChosen: (callback: Function) => ipcRenderer.on('invalid-install-directory-chosen', (event, message) => { callback(message); }),
+
+    onDownloadStart: (callback: Function) => ipcRenderer.on('download-started', (event, filename, total, index) => { callback(filename, total, index); }),
+    onDownloadFinished: (callback: Function) => ipcRenderer.on('download-finished', (event) => { callback(); }),
+    onDownloadProgress: (callback: Function) => ipcRenderer.on('download-progress', (event, total, name, downloaded, progress, speed) => { callback(total, name, downloaded, progress, speed); }),
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */

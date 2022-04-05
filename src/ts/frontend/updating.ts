@@ -1,4 +1,4 @@
-const bootstrap = require('bootstrap');
+import { Modal } from 'bootstrap';
 import { hide, show } from "./helpers";
 
 export class Updating {
@@ -19,6 +19,7 @@ export class Updating {
     private progressBarContainer: HTMLElement;
     private progressBar: HTMLElement;
     private progressBarText: HTMLElement;
+    private progressBarEndText: HTMLElement;
 
     constructor() {
         /** Button References. */
@@ -35,20 +36,26 @@ export class Updating {
         this.progressBar = document.getElementById('progress-bar');
         this.progressBarContainer = document.getElementById('progress-bar-container');
         this.progressBarText = document.getElementById('progress-bar-text');
+        this.progressBarEndText = document.getElementById('progress-bar-end-text');
         this.installModal = document.getElementById('installModal');
 
         /** Register Callbacks. */
         window.updaterAPI.onStateChanged((state) => { this.onStateChanged(state); });
         this.chooseDirectoryButton.addEventListener('click', () => { window.updaterAPI.onOpenDirectoryPicker(); });
-        window.updaterAPI.onValidDirectoryChosen(this.onValidDirectoryChosen);
+        window.updaterAPI.onValidDirectoryChosen(() => { this.onValidDirectoryChosen(); });
         window.updaterAPI.onInvalidDirectoryChosen(this.onInvalidDirectoryChosen);
+
+        /** Download Events. */
+        window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
+        window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
+        window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
     }
 
     /**
      * Fires when a User has chosen a valid install directory.
      */
     onValidDirectoryChosen() {
-        let modal = bootstrap.Modal.getInstance(this.installModal);
+        let modal = Modal.getInstance(this.installModal);
         modal.hide();
     }
 
@@ -168,6 +175,20 @@ export class Updating {
         this.setProgressBarPercentage(0, 100);
     }
 
+    onDownloadStart(filename: string, total: number, index: number) {
+        this.progressBarText.innerText = `${total} Remaining Files: ${filename}`;
+        this.setProgressBarPercentage(0, 100);
+    }
+
+    onDownloadFinished() {
+        this.setProgressBarPercentage(0, 100);
+    }
+
+    onDownloadProgress(total: number, name: string, downloaded: number, progress: number, speed: number) {
+        this.setProgressBarPercentage(downloaded, total);
+        this.progressBarEndText.innerText = `Total: ${this.formatBytes(total, 2)} - Remaining: ${this.formatBytes(total - downloaded, 2)}`;
+    }
+
     /**
      * Updates the Progress Bar State.
      * @param current The number to use when calculating percentage.
@@ -178,5 +199,17 @@ export class Updating {
 
         this.progressBar.style.width = `${percent}%`;
         this.progressBar.ariaValueNow = `${percent}`;
+    }
+
+    formatBytes(bytes: number, decimals: number = 2) {
+        if (bytes === 0) return '0 Bytes';
+    
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 }

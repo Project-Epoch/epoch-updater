@@ -2,6 +2,7 @@ import { app, net } from "electron";
 import { WindowManager } from "./window";
 import fs from 'fs';
 import { ClientManager } from "./client";
+import { DownloaderHelper } from "node-downloader-helper";
 
 /**
  * The various States of the Updater Process.
@@ -36,6 +37,7 @@ export class Updater {
     private manifestHost: string = 'updater.project-epoch.net';
     private version: string = '';
     private updatableFiles: Array<PatchFiles> = [];
+    private remainingFiles: number = 0;
 
     constructor() {
         this.currentState = UpdateState.NONE;
@@ -112,14 +114,47 @@ export class Updater {
         this.setState(UpdateState.UPDATE_AVAILABLE);
     }
 
-    downloadUpdates() {
+    async downloadUpdates() {
         this.setState(UpdateState.DOWNLOADING);
+        this.remainingFiles = this.updatableFiles.length;
 
-        console.log(`Downloading ${this.updatableFiles.length} Files...`);
+        for (let index = 0; index < this.updatableFiles.length; index++) {
+            const element = this.updatableFiles[index];
 
-        this.updatableFiles.forEach((value) => {
-            console.log(`Updating File: ${value.Path} - ${value.Hash}`);
+            /** Figure out filename. */
+            let parts = element.Path.split('\\');
+            let filename = parts[parts.length - 1];
+
+            /** Figure out Directory. */
+            let clientDir = ClientManager.getClientDirectory();
+            let downloadDir = element.Path.split(filename)[0];
+            let directory = `${clientDir}\\${downloadDir}`;
+
+            if (! fs.existsSync(directory)) {
+                fs.mkdirSync(directory, { recursive: true });
+            }
+            
+            await this.download(element.URL, directory, filename, index);
+        }
+    }
+
+    async download(url: string, directory: string, filename: string, index: number) {
+        const dl = new DownloaderHelper(url, directory);
+
+        dl.on('start', () => {
+            WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1);
+            this.remainingFiles--;
         });
+
+        dl.on('progress', (stats) => { 
+            WindowManager.get().webContents.send('download-progress', stats.total, stats.name, stats.downloaded, stats.progress, stats.speed);
+        });
+
+        dl.on('end', () => {
+            WindowManager.get().webContents.send('download-finished');
+        });
+
+        await dl.start();
     }
 
     /**

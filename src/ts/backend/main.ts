@@ -30,8 +30,10 @@ class Main {
         ipcMain.on('link-clicked', (event, args) => { shell.openExternal(args); });
         ipcMain.on('choose-install-directory', () => { 
             ClientManager.chooseDirectory(() => {
-                UpdateManager.setState(UpdateState.GET_MANIFEST);
-                UpdateManager.getManifest();
+                setTimeout(() => {
+                    UpdateManager.setState(UpdateState.GET_MANIFEST);
+                    UpdateManager.getManifest();
+                }, 1000);
             });
         });
         ipcMain.on('refresh-update-state', () => { UpdateManager.refresh(); });
@@ -45,6 +47,7 @@ class Main {
         /** User has either not set directory yet or has moved their client. */
         if (! ClientManager.hasClientDirectory() || ! ClientManager.isWarcraftDirectory(ClientManager.getClientDirectory())) {
             UpdateManager.setState(UpdateState.SETUP);
+            return;
         }
 
         /** Otherwise - Go to patching. */
