@@ -2,14 +2,18 @@ const bootstrap = require('bootstrap');
 import { hide, show } from "./helpers";
 
 export class Updating {
-    /** DOM Objects. */
+    /** Main Buttons. */
     private initButton: HTMLElement;
     private installButton: HTMLElement;
     private updateButton: HTMLElement;
     private playButton: HTMLElement;
+
+    /** Install Modal Elements. */
     private chooseDirectoryButton: HTMLElement;
     private directoryErrorContainer: HTMLElement;
     private directoryErrorMessage: HTMLElement;
+
+    /** Progress Bar Elements. */
     private progressBarContainer: HTMLElement;
     private progressBar: HTMLElement;
     private installModal: HTMLElement;
@@ -36,11 +40,18 @@ export class Updating {
         window.updaterAPI.onInvalidDirectoryChosen(this.onInvalidDirectoryChosen);
     }
 
+    /**
+     * Fires when a User has chosen a valid install directory.
+     */
     onValidDirectoryChosen() {
         let modal = bootstrap.Modal.getInstance(this.installModal);
         modal.hide();
     }
 
+    /**
+     * Fires when a User has chosen an invalid directory during install.
+     * @param message The reason why it was invalid.
+     */
     onInvalidDirectoryChosen(message: string) {
         show(this.directoryErrorContainer);
         this.directoryErrorMessage.innerText = message;
