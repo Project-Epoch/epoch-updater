@@ -1,4 +1,6 @@
 import { app, ipcMain, shell } from "electron";
+import { ClientManager } from "./client";
+import { UpdateManager, UpdateState } from "./updater";
 import { WindowManager } from "./window";
 
 /**
@@ -13,14 +15,39 @@ class Main {
     constructor() {
         this.registerIPC();
 
+        /** Electron App Events. */
         app.on('ready', this.onReady);
         app.on('window-all-closed', this.onAllWindowClosed);
     }
 
+    /**
+     * Registers our Inter Process Communications.
+     */
     registerIPC() {
+        ipcMain.on('window-rendered', this.onWindowRendered);
         ipcMain.on('window-close', () => { app.quit() });
         ipcMain.on('window-minimize', () => { WindowManager.get().minimize() });
         ipcMain.on('link-clicked', (event, args) => { shell.openExternal(args); });
+        ipcMain.on('choose-install-directory', () => { 
+            ClientManager.chooseDirectory(() => {
+                UpdateManager.setState(UpdateState.GET_MANIFEST);
+            });
+        });
+        ipcMain.on('refresh-update-state', () => { UpdateManager.refresh(); });
+    }
+
+    /**
+     * When the DOM Content has been loaded we start setting 
+     * up our initial updater state.
+     */
+    onWindowRendered() {
+        /** User has either not set directory yet or has moved their client. */
+        if (! ClientManager.hasClientDirectory() || ! ClientManager.isWarcraftDirectory(ClientManager.getClientDirectory())) {
+            UpdateManager.setState(UpdateState.SETUP);
+        }
+
+        /** Otherwise - Go to patching. */
+        UpdateManager.setState(UpdateState.GET_MANIFEST);
     }
 
     /**

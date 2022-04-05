@@ -1,5 +1,5 @@
 import { app } from 'electron';
-import Main from './ts/main';
+import Main from './ts/backend/main';
 
 /** 
  * Handle creating/removing shortcuts on Windows when installing/uninstalling.
