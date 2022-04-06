@@ -49,9 +49,6 @@ export class Updating {
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
-    
-        /** Verification Progress */
-        window.updaterAPI.onVerifyProgress((total, progress, filename) => { this.onVerifyProgress(total, progress, filename); });
     }
 
     /**
@@ -162,25 +159,14 @@ export class Updating {
         show(this.cancelButton);
 
         /** Remove Striping if present. */
-        this.progressBar.classList.remove('progress-bar-striped');
-        this.progressBar.classList.remove('progress-bar-animated');
+        this.progressBar.classList.add('progress-bar-striped');
+        this.progressBar.classList.add('progress-bar-animated');
 
         /** Update Text. */
         this.progressBarText.innerText = "Verifying Game Integrity...";
 
         /** Reset Bar. */
-        this.setProgressBarPercentage(0, 100);
-    }
-
-    /**
-     * Fired when we get a file verification progress update.
-     * @param total Number of files.
-     * @param progress Current file.
-     * @param filename File name.
-     */
-    onVerifyProgress(total: number, progress: number, filename: string) {
-        this.progressBarText.innerText = `Verifying ${total - progress} Files: ${filename}`;
-        this.setProgressBarPercentage(progress, total);
+        this.setProgressBarPercentage(100, 100);
     }
 
     /**

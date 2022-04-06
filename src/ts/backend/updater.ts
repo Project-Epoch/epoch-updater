@@ -112,8 +112,6 @@ export class Updater {
             let element = manifest.Files[index];
             let localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;
 
-            WindowManager.get().webContents.send('verify-progress', manifest.Files.length, index + 1, element.Path);
-
             /** Doesn't Exist. Just Download. */
             if (! fs.existsSync(localPath)) {
                 this.updatableFiles.push(element);
