@@ -173,6 +173,7 @@ export class Updating {
         /** Hide / Display Buttons. */
         this.hideAllButtons();
         show(this.initButton);
+        hide(this.progressBarEndText);
 
         /** Remove Striping if present. */
         this.progressBar.classList.add('progress-bar-striped');
@@ -226,7 +227,8 @@ export class Updating {
      * @param index Current file out of that total.
      */
     onDownloadStart(filename: string, total: number, index: number) {
-        this.progressBarText.innerText = `${total} Remaining Files: ${filename}`;
+        show(this.progressBarEndText);
+        this.progressBarText.innerText = `Current File: ${filename}`;
         this.setProgressBarPercentage(0, 100);
     }
 
