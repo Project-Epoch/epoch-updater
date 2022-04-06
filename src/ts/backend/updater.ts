@@ -200,7 +200,15 @@ export class Updater {
      * @param index And out of all our downloads which is this.
      */
     async download(url: string, directory: string, filename: string, index: number) {
-        this.currentDownload = new DownloaderHelper(url, directory);
+        this.currentDownload = new DownloaderHelper(url, directory, {
+            override: true,
+            removeOnFail: true,
+            timeout: 60000,
+            retry: {
+                maxRetries: 3,
+                delay: 5000,
+            },
+        });
 
         this.currentDownload.on('start', () => {
             WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1);
