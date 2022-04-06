@@ -34,6 +34,7 @@ export type UpdaterAPI = {
     onDownloadStart: (callback: (filename: string, total: number, index: number) => void) => void;
     onDownloadFinished: (callback: () => void) => void;
     onDownloadProgress: (callback: (total: number, name: string, downloaded: number, progress: number, speed: number) => void) => void;
+    onVerifyProgress: (callback: (total: number, progress: number, filename: string) => void) => void;
 }
 
 const updaterAPI: UpdaterAPI = {
@@ -46,6 +47,7 @@ const updaterAPI: UpdaterAPI = {
     onDownloadStart: (callback: Function) => ipcRenderer.on('download-started', (event, filename, total, index) => { callback(filename, total, index); }),
     onDownloadFinished: (callback: Function) => ipcRenderer.on('download-finished', (event) => { callback(); }),
     onDownloadProgress: (callback: Function) => ipcRenderer.on('download-progress', (event, total, name, downloaded, progress, speed) => { callback(total, name, downloaded, progress, speed); }),
+    onVerifyProgress: (callback: Function) => ipcRenderer.on('verify-progress', (event, total, progress, filename) => { callback(total, progress, filename); }),
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */

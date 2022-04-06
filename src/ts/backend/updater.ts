@@ -3,6 +3,7 @@ import { WindowManager } from "./window";
 import fs from 'fs';
 import { ClientManager } from "./client";
 import { DownloaderHelper } from "node-downloader-helper";
+import md5File from 'md5-file';
 
 /**
  * The various States of the Updater Process.
@@ -17,7 +18,7 @@ export enum UpdateState {
     DONE = 'done',
 }
 
-interface PatchFiles {
+interface PatchFile {
     Path: string;
     Hash: string;
     Size: number;
@@ -26,7 +27,7 @@ interface PatchFiles {
 
 interface Manifest {
     Version: string;
-    Files: Array<PatchFiles>;
+    Files: Array<PatchFile>;
 }
 
 /**
@@ -36,8 +37,9 @@ export class Updater {
     private currentState: UpdateState;
     private manifestHost: string = 'updater.project-epoch.net';
     private version: string = '';
-    private updatableFiles: Array<PatchFiles> = [];
+    private updatableFiles: Array<PatchFile> = [];
     private remainingFiles: number = 0;
+    private currentDownload: DownloaderHelper;
 
     constructor() {
         this.currentState = UpdateState.NONE;
@@ -91,18 +93,23 @@ export class Updater {
 
     }
 
-    checkIntegrity(manifest: Manifest) {
+    async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
 
-        manifest.Files.forEach((value) => {
-            let localPath = `${ClientManager.getClientDirectory()}\\${value.Path}`;
+        for (let index = 0; index < manifest.Files.length; index++) {
+            const element = manifest.Files[index];
+            const localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;
+
+            WindowManager.get().webContents.send('verify-progress', manifest.Files.length, index + 1, element.Path);
 
             /** Doesn't Exist. Just Download. */
             if (! fs.existsSync(localPath)) {
-                this.updatableFiles.push(value);
-                return;
+                this.updatableFiles.push(element);
+                continue;
             }
-        });
+
+            await this.checkHash(element, localPath);
+        }
 
         /** Need to download every file. Must be new. */
         if (this.updatableFiles.length === manifest.Files.length) {
@@ -110,8 +117,22 @@ export class Updater {
             return;
         }
 
-        /** Only some files. Must be an update. */
-        this.setState(UpdateState.UPDATE_AVAILABLE);
+        if (this.updatableFiles.length > 0) {
+            /** Only some files. Must be an update. */
+            this.setState(UpdateState.UPDATE_AVAILABLE);
+        } else {
+            this.setState(UpdateState.DONE);
+        }
+    }
+
+    async checkHash(file: PatchFile, localPath: string) {
+        await md5File(localPath).then((hash) => {
+            console.log(`File: ${file.Path} - Hash: ${hash} - Manifest Hash: ${file.Hash}`);
+
+            if (hash !== file.Hash) {
+                this.updatableFiles.push(file);
+            }
+        });
     }
 
     async downloadUpdates() {
@@ -139,22 +160,22 @@ export class Updater {
     }
 
     async download(url: string, directory: string, filename: string, index: number) {
-        const dl = new DownloaderHelper(url, directory);
+        this.currentDownload = new DownloaderHelper(url, directory);
 
-        dl.on('start', () => {
+        this.currentDownload.on('start', () => {
             WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1);
             this.remainingFiles--;
         });
 
-        dl.on('progress', (stats) => { 
+        this.currentDownload.on('progress', (stats) => { 
             WindowManager.get().webContents.send('download-progress', stats.total, stats.name, stats.downloaded, stats.progress, stats.speed);
         });
 
-        dl.on('end', () => {
+        this.currentDownload.on('end', () => {
             WindowManager.get().webContents.send('download-finished');
         });
 
-        await dl.start();
+        await this.currentDownload.start();
     }
 
     /**

@@ -49,6 +49,9 @@ export class Updating {
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
+    
+        /** Verification Progress */
+        window.updaterAPI.onVerifyProgress((total, progress, filename) => { this.onVerifyProgress(total, progress, filename); });
     }
 
     /**
@@ -94,6 +97,10 @@ export class Updating {
             case 'update-available':
                 this.onUpdateAvailableState();
                 break;
+
+            case 'done':
+                this.onDoneState();
+                break;
         
             default:
                 console.log(`Frontend - Unexpected State: ${state}`);
@@ -107,6 +114,14 @@ export class Updating {
         hide(this.updateButton);
         hide(this.playButton);
         hide(this.cancelButton);
+    }
+
+    onDoneState() {
+        console.log('onDoneState');
+
+        this.hideAllButtons();
+        hide(this.progressBarContainer);
+        show(this.playButton);
     }
 
     /**
@@ -143,10 +158,15 @@ export class Updating {
         this.progressBar.classList.remove('progress-bar-animated');
 
         /** Update Text. */
-        this.progressBarText.innerText = "";
+        this.progressBarText.innerText = "Verifying Game Integrity...";
 
         /** Reset Bar. */
         this.setProgressBarPercentage(0, 100);
+    }
+
+    onVerifyProgress(total: number, progress: number, filename: string) {
+        this.progressBarText.innerText = `Validating ${total - progress} Files: ${filename}`;
+        this.setProgressBarPercentage(progress, total);
     }
 
     onUpdateAvailableState() {
@@ -160,6 +180,8 @@ export class Updating {
 
         /** Reset Bar. */
         this.setProgressBarPercentage(0, 100);
+        this.progressBar.classList.add('progress-bar-striped');
+        this.progressBar.classList.add('progress-bar-animated');
     }
 
     onDownloadingState() {
