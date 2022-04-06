@@ -2,6 +2,7 @@ import { SettingsManager } from './settings';
 import fs from 'fs';
 import { WindowManager } from './window';
 import { dialog } from 'electron';
+import cp from "child_process";
 
 /**
  * A class to handle interacting with the Client.
@@ -65,7 +66,15 @@ export class Client {
      * Checks to see if we have a Client Directory Set.
      */
     hasClientDirectory(): boolean {
-        return this.getClientDirectory() !== '';
+        if (this.getClientDirectory() === '') {
+            return false;
+        }
+
+        if (! fs.existsSync(this.getClientDirectory())) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -112,6 +121,16 @@ export class Client {
         }
 
         return true;
+    }
+
+    /**
+     * Attempts to open the WoW Client Exe.
+     */
+    open() {
+        let exe = 'Project-Epoch.exe';
+        let path = `${this.getClientDirectory()}\\${exe}`;
+
+        cp.exec(path);
     }
 }
 

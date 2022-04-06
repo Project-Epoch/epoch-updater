@@ -44,11 +44,22 @@ export class Updating {
         this.chooseDirectoryButton.addEventListener('click', () => { window.updaterAPI.onOpenDirectoryPicker(); });
         window.updaterAPI.onValidDirectoryChosen(() => { this.onValidDirectoryChosen(); });
         window.updaterAPI.onInvalidDirectoryChosen(this.onInvalidDirectoryChosen);
+        this.playButton.addEventListener('click', () => { this.onPlayButtonClicked() });
 
         /** Download Events. */
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
+    }
+
+    /**
+     * Fires when the Play Button is clicked.
+     */
+    onPlayButtonClicked() {
+        this.hideAllButtons();
+        show(this.initButton);
+        this.playButton.setAttribute('disabled', '');
+        window.updaterAPI.onPlayButtonClicked();
     }
 
     /**
