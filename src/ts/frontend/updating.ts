@@ -44,12 +44,17 @@ export class Updating {
         this.chooseDirectoryButton.addEventListener('click', () => { window.updaterAPI.onOpenDirectoryPicker(); });
         window.updaterAPI.onValidDirectoryChosen(() => { this.onValidDirectoryChosen(); });
         window.updaterAPI.onInvalidDirectoryChosen(this.onInvalidDirectoryChosen);
-        this.playButton.addEventListener('click', () => { this.onPlayButtonClicked() });
+        this.playButton.addEventListener('click', () => { this.onPlayButtonClicked(); });
+        this.updateButton.addEventListener('click', () => { this.onUpdateButtonClicked(); });
 
         /** Download Events. */
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
+    }
+
+    onUpdateButtonClicked() {
+        window.updaterAPI.onUpdateButtonClicked();
     }
 
     /**
@@ -167,7 +172,7 @@ export class Updating {
     onVerifyingIntegrityState() {
         /** Hide / Display Buttons. */
         this.hideAllButtons();
-        show(this.cancelButton);
+        show(this.initButton);
 
         /** Remove Striping if present. */
         this.progressBar.classList.add('progress-bar-striped');

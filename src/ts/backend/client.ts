@@ -66,15 +66,7 @@ export class Client {
      * Checks to see if we have a Client Directory Set.
      */
     hasClientDirectory(): boolean {
-        if (this.getClientDirectory() === '') {
-            return false;
-        }
-
-        if (! fs.existsSync(this.getClientDirectory())) {
-            return false;
-        }
-
-        return true;
+        return this.getClientDirectory() !== '';
     }
 
     /**

@@ -39,6 +39,7 @@ export type UpdaterAPI = {
     onVerifyProgress: (callback: (total: number, progress: number, filename: string) => void) => void;
 
     onPlayButtonClicked: () => void;
+    onUpdateButtonClicked: () => void;
 }
 
 const updaterAPI: UpdaterAPI = {
@@ -56,6 +57,7 @@ const updaterAPI: UpdaterAPI = {
     onVerifyProgress: (callback: Function) => ipcRenderer.on('verify-progress', (event, total, progress, filename) => { callback(total, progress, filename); }),
 
     onPlayButtonClicked: () => { ipcRenderer.send('play-game'); },
+    onUpdateButtonClicked: () => { ipcRenderer.send('update-button-click'); },
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */

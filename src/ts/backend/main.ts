@@ -38,6 +38,9 @@ class Main {
             });
         });
         ipcMain.on('refresh-update-state', () => { UpdateManager.refresh(); });
+        ipcMain.on('update-button-click', () => {
+            UpdateManager.downloadUpdates();
+        });
         ipcMain.on('play-game', () => { 
             ClientManager.open();
 

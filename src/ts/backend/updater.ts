@@ -37,7 +37,7 @@ interface Manifest {
 export class Updater {
     private currentState: UpdateState;
     private manifestHost: string = 'updater.project-epoch.net';
-    private version: string = '';
+    private manifest: Manifest | undefined;
     private updatableFiles: Array<PatchFile> = [];
     private remainingFiles: number = 0;
     private currentDownload: DownloaderHelper;
@@ -90,7 +90,7 @@ export class Updater {
      * @param manifest The Patch Manifest we got.
      */
     onManifestReceived(manifest: Manifest) {
-        this.version = manifest.Version;
+        this.manifest = manifest;
         this.checkIntegrity(manifest);
     }
 
@@ -107,6 +107,7 @@ export class Updater {
      */
     async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
+        this.updatableFiles = [];
 
         for (let index = 0; index < manifest.Files.length; index++) {
             let element = manifest.Files[index];
@@ -187,6 +188,8 @@ export class Updater {
             
             await this.download(element.URL, directory, filename, index);
         }
+
+        this.checkIntegrity(this.manifest);
     }
 
     /**
@@ -206,6 +209,11 @@ export class Updater {
 
         this.currentDownload.on('progress', (stats) => { 
             WindowManager.get().webContents.send('download-progress', stats.total, stats.name, stats.downloaded, stats.progress, stats.speed);
+        });
+
+        this.currentDownload.on('error', (stats) => {
+            console.log('Download Failed');
+            console.log(`Message: ${stats.message} - Status: ${stats.status} - Body: ${stats.body}`);
         });
 
         this.currentDownload.on('end', () => {
