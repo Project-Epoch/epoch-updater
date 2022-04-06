@@ -7,8 +7,6 @@ interface SettingStructure {
     clientDirectory: string;
 }
 
-/** Actually create the Structure and assign defaults. */
-
 /**
  * Actually create the Settings Store Structure and assign defaults.
  */

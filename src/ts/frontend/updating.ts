@@ -108,6 +108,9 @@ export class Updating {
         }
     }
 
+    /**
+     * Hides all the primary buttons.
+     */
     hideAllButtons() {
         hide(this.initButton);
         hide(this.installButton);
@@ -116,9 +119,11 @@ export class Updating {
         hide(this.cancelButton);
     }
 
+    /**
+     * Fires when all other actions are done and we're 
+     * ready to play.
+     */
     onDoneState() {
-        console.log('onDoneState');
-
         this.hideAllButtons();
         hide(this.progressBarContainer);
         show(this.playButton);
@@ -148,6 +153,9 @@ export class Updating {
         this.setProgressBarPercentage(100, 100);
     }
 
+    /**
+     * Fired when we start to verify the integrity of files.
+     */
     onVerifyingIntegrityState() {
         /** Hide / Display Buttons. */
         this.hideAllButtons();
@@ -164,11 +172,20 @@ export class Updating {
         this.setProgressBarPercentage(0, 100);
     }
 
+    /**
+     * Fired when we get a file verification progress update.
+     * @param total Number of files.
+     * @param progress Current file.
+     * @param filename File name.
+     */
     onVerifyProgress(total: number, progress: number, filename: string) {
-        this.progressBarText.innerText = `Validating ${total - progress} Files: ${filename}`;
+        this.progressBarText.innerText = `Verifying ${total - progress} Files: ${filename}`;
         this.setProgressBarPercentage(progress, total);
     }
 
+    /**
+     * Fired when Updates are available.
+     */
     onUpdateAvailableState() {
         /** Hide / Display Buttons. */
         this.hideAllButtons();
@@ -184,6 +201,9 @@ export class Updating {
         this.progressBar.classList.add('progress-bar-animated');
     }
 
+    /**
+     * Fired when we move to the Downloading Files state.
+     */
     onDownloadingState() {
         /** Hide / Display Buttons. */
         this.hideAllButtons();
@@ -197,15 +217,32 @@ export class Updating {
         this.setProgressBarPercentage(0, 100);
     }
 
+    /**
+     * Fires each time a new file download begins.
+     * @param filename The file that started.
+     * @param total Total number of files.
+     * @param index Current file out of that total.
+     */
     onDownloadStart(filename: string, total: number, index: number) {
         this.progressBarText.innerText = `${total} Remaining Files: ${filename}`;
         this.setProgressBarPercentage(0, 100);
     }
 
+    /**
+     * Fires each time a file download ends.
+     */
     onDownloadFinished() {
         this.setProgressBarPercentage(0, 100);
     }
 
+    /**
+     * Every time we get a file download progress update this fires.
+     * @param total File size in bytes.
+     * @param name File name.
+     * @param downloaded Number of bytes downloaded.
+     * @param progress Progress percentage.
+     * @param speed Current speed in bytes.
+     */
     onDownloadProgress(total: number, name: string, downloaded: number, progress: number, speed: number) {
         this.setProgressBarPercentage(downloaded, total);
         this.progressBarEndText.innerText = `Total: ${this.formatBytes(total, 2)} - Remaining: ${this.formatBytes(total - downloaded, 2)}`;
@@ -223,6 +260,12 @@ export class Updating {
         this.progressBar.ariaValueNow = `${percent}`;
     }
 
+    /**
+     * Formats a given number of bytes to their appropriate higher order type.
+     * @param bytes 
+     * @param decimals 
+     * @returns Formatted Bytes.
+     */
     formatBytes(bytes: number, decimals: number = 2) {
         if (bytes === 0) return '0 Bytes';
     

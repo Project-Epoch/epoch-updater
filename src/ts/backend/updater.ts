@@ -22,6 +22,7 @@ interface PatchFile {
     Path: string;
     Hash: string;
     Size: number;
+    Custom: boolean;
     URL: string;
 }
 
@@ -50,6 +51,9 @@ export class Updater {
         }
     }
 
+    /**
+     * Gets the Patch Manifest from our updater API.
+     */
     getManifest() {
         const request = net.request({
             method: 'GET',
@@ -81,6 +85,10 @@ export class Updater {
         request.end();
     }
 
+    /**
+     * Fired when we have finished loading the Patch Manifest.
+     * @param manifest The Patch Manifest we got.
+     */
     onManifestReceived(manifest: Manifest) {
         this.version = manifest.Version;
         this.checkIntegrity(manifest);
@@ -93,12 +101,16 @@ export class Updater {
 
     }
 
+    /**
+     * Begins the process of checking integrity of game files.
+     * @param manifest The Patch Manifest we're using.
+     */
     async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
 
         for (let index = 0; index < manifest.Files.length; index++) {
-            const element = manifest.Files[index];
-            const localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;
+            let element = manifest.Files[index];
+            let localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;
 
             WindowManager.get().webContents.send('verify-progress', manifest.Files.length, index + 1, element.Path);
 
@@ -108,6 +120,17 @@ export class Updater {
                 continue;
             }
 
+            /** Blizzard File - Just check number of bytes. */
+            if (! element.Custom) {
+                let size = fs.statSync(localPath).size;
+                if (element.Size !== size) {
+                    this.updatableFiles.push(element);
+                }
+
+                continue;
+            }
+
+            /** Custom File. Actually Hash Check. */
             await this.checkHash(element, localPath);
         }
 
@@ -125,16 +148,25 @@ export class Updater {
         }
     }
 
+    /**
+     * Generates an MD5 hash for the given file and if not 
+     * matching then marks as requiring update.
+     * @param file Our Patch Manifest File Entry.
+     * @param localPath The path on disk for where it is.
+     */
     async checkHash(file: PatchFile, localPath: string) {
         await md5File(localPath).then((hash) => {
-            console.log(`File: ${file.Path} - Hash: ${hash} - Manifest Hash: ${file.Hash}`);
-
             if (hash !== file.Hash) {
                 this.updatableFiles.push(file);
             }
         });
     }
 
+    /**
+     * Sets our state to Downloading and begins the 
+     * process of downloading any updates we had 
+     * remaining.
+     */
     async downloadUpdates() {
         this.setState(UpdateState.DOWNLOADING);
         this.remainingFiles = this.updatableFiles.length;
@@ -159,6 +191,13 @@ export class Updater {
         }
     }
 
+    /**
+     * Attempts to download a file from our CDN.
+     * @param url The URL of the file we're downloading.
+     * @param directory The directory where we should save it.
+     * @param filename The filename to give it.
+     * @param index And out of all our downloads which is this.
+     */
     async download(url: string, directory: string, filename: string, index: number) {
         this.currentDownload = new DownloaderHelper(url, directory);
 
