@@ -52,6 +52,7 @@ export class Updating {
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
+        window.updaterAPI.onVersionReceived((version) => { this.onVersionReceived(version); });
     
         /** Modal Events */
         document.getElementById('installModal').addEventListener('hidden.bs.modal', function (event) {
@@ -225,6 +226,15 @@ export class Updating {
         this.setProgressBarPercentage(0, 100);
         this.progressBar.classList.add('progress-bar-striped');
         this.progressBar.classList.add('progress-bar-animated');
+    }
+
+    /**
+     * Fires when we receive the version number for the 
+     * latest update.
+     * @param version The latest version.
+     */
+    onVersionReceived(version: string) {
+        this.progressBarText.innerText = `Update Available! - ${version}`;
     }
 
     /**

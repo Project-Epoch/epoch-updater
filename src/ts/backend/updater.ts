@@ -135,6 +135,7 @@ export class Updater {
         if (this.updatableFiles.length > 0) {
             /** Only some files. Must be an update. */
             this.setState(UpdateState.UPDATE_AVAILABLE);
+            WindowManager.get().webContents.send('version-received', this.manifest.Version);
         } else {
             this.setState(UpdateState.DONE);
         }
