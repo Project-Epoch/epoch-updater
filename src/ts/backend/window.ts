@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { app, BrowserWindow } from "electron";
 
 /**
  * Used to both Create and Access the Browser Window.
@@ -32,7 +32,9 @@ export class Window {
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
 
-        this.window.webContents.openDevTools({ mode: 'detach' });
+        if (! app.isPackaged) {
+            this.window.webContents.openDevTools({ mode: 'detach' });
+        }
 
         return this;
     }
