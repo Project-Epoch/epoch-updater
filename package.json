@@ -1,6 +1,6 @@
 {
   "name": "epoch-updater",
-  "productName": "epoch-updater",
+  "productName": "Project Epoch Updater",
   "version": "1.0.0",
   "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
@@ -31,9 +31,10 @@
             "name": "ProjectEpochUpdater",
             "authors": "Project Epoch",
             "description": "The Game Client Updater for Project Epoch.",
-            "exe": "epoch-updater.exe",
+            "exe": "Project Epoch Updater.exe",
             "setupExe": "epoch-installer.exe",
-            "iconUrl": "https://cdn.project-epoch.net/media/updater/epoch.ico"
+            "iconUrl": "https://cdn.project-epoch.net/media/updater/epoch.ico",
+            "loadingGif": "./assets/loading.gif"
           }
         },
         {
