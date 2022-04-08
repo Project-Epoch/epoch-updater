@@ -40,6 +40,7 @@ export type UpdaterAPI = {
 
     onPlayButtonClicked: () => void;
     onUpdateButtonClicked: () => void;
+    onCancelButtonClicked: () => void;
 }
 
 const updaterAPI: UpdaterAPI = {
@@ -58,6 +59,7 @@ const updaterAPI: UpdaterAPI = {
 
     onPlayButtonClicked: () => { ipcRenderer.send('play-game'); },
     onUpdateButtonClicked: () => { ipcRenderer.send('update-button-click'); },
+    onCancelButtonClicked: () => { ipcRenderer.send('on-cancel-button-clicked'); },
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */

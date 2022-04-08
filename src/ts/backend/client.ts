@@ -76,12 +76,18 @@ export class Client {
      * @param path The Directory we're checking.
      */
     isWarcraftDirectory(path: string): boolean {
-        /** Data Directory Doesnt Exists. */
-        if (! fs.existsSync(`${path}\\Data\\`)) {
+        /** Exe doesn't exist. */
+        if (! fs.existsSync(`${path}\\WowError.exe`)) {
             return false;
         }
-        /** Lich King MPQ Doesn't Exist. */
-        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
+
+        /** Battlenet dll doesn't exist. */
+        if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
+            return false;
+        }
+
+        /** Data Directory Doesnt Exists. */
+        if (! fs.existsSync(`${path}\\Data\\`)) {
             return false;
         }
 

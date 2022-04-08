@@ -109,6 +109,7 @@
     "@popperjs/core": "^2.11.4",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
+    "electron-unhandled": "^4.0.1",
     "md5-file": "^5.0.0",
     "node-downloader-helper": "^2.1.0"
   }

@@ -18,7 +18,7 @@ class Main {
         /** Electron App Events. */
         app.on('ready', this.onReady);
         app.on('window-all-closed', this.onAllWindowClosed);
-        app.on('quit', this.onAppQuit);
+        app.on('before-quit', () => { this.onAppQuit(); });
     }
 
     /**
@@ -38,9 +38,8 @@ class Main {
             });
         });
         ipcMain.on('refresh-update-state', () => { UpdateManager.refresh(); });
-        ipcMain.on('update-button-click', () => {
-            UpdateManager.downloadUpdates();
-        });
+        ipcMain.on('update-button-click', () => { UpdateManager.downloadUpdates(); });
+        ipcMain.on('on-cancel-button-clicked', () => { UpdateManager.cancel(); });
         ipcMain.on('play-game', () => { 
             ClientManager.open();
 
@@ -52,11 +51,11 @@ class Main {
 
     /**
      * Fires when the app is quitting.
-     * @param event The event itself.
-     * @param exitCode The exit code of the app.
      */
-    onAppQuit(event: Event, exitCode: number) {
-        console.log('App Exiting');
+    onAppQuit() {
+        if (UpdateManager.getState() === UpdateState.DOWNLOADING) {
+            UpdateManager.cancel();
+        }
     }
 
     /**

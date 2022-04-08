@@ -41,6 +41,7 @@ export class Updater {
     private updatableFiles: Array<PatchFile> = [];
     private remainingFiles: number = 0;
     private currentDownload: DownloaderHelper;
+    private cancelled: boolean = false;
 
     constructor() {
         this.currentState = UpdateState.NONE;
@@ -169,9 +170,15 @@ export class Updater {
     async downloadUpdates() {
         this.setState(UpdateState.DOWNLOADING);
         this.remainingFiles = this.updatableFiles.length;
+        this.cancelled = false;
 
         for (let index = 0; index < this.updatableFiles.length; index++) {
             const element = this.updatableFiles[index];
+
+            /** If we've cancelled don't process any more. */
+            if (this.cancelled) {
+                continue;
+            }
 
             /** Figure out filename. */
             let parts = element.Path.split('\\');
@@ -193,6 +200,15 @@ export class Updater {
     }
 
     /**
+     * Attempts to cancel the current downloads.
+     */
+    async cancel() {
+        this.cancelled = true;
+        await this.currentDownload.stop();
+        this.checkIntegrity(this.manifest);
+    }
+
+    /**
      * Attempts to download a file from our CDN.
      * @param url The URL of the file we're downloading.
      * @param directory The directory where we should save it.
@@ -202,6 +218,7 @@ export class Updater {
     async download(url: string, directory: string, filename: string, index: number) {
         this.currentDownload = new DownloaderHelper(url, directory, {
             override: true,
+            removeOnStop: true,
             removeOnFail: true,
             timeout: 60000,
             retry: {
@@ -226,6 +243,10 @@ export class Updater {
 
         this.currentDownload.on('end', () => {
             WindowManager.get().webContents.send('download-finished');
+        });
+
+        this.currentDownload.on('stop', () => {
+            console.log('Download Stopped');
         });
 
         await this.currentDownload.start();

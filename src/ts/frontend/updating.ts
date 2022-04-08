@@ -46,6 +46,7 @@ export class Updating {
         window.updaterAPI.onInvalidDirectoryChosen(this.onInvalidDirectoryChosen);
         this.playButton.addEventListener('click', () => { this.onPlayButtonClicked(); });
         this.updateButton.addEventListener('click', () => { this.onUpdateButtonClicked(); });
+        this.cancelButton.addEventListener('click', () => { this.onCancelButtonClicked(); });
 
         /** Download Events. */
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
@@ -53,8 +54,19 @@ export class Updating {
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
     }
 
+    /**
+     * Fires when an update was available and they accepted it.
+     */
     onUpdateButtonClicked() {
         window.updaterAPI.onUpdateButtonClicked();
+    }
+
+    /**
+     * Fires when the Cancel button is clicked during the
+     * download process.
+     */
+    onCancelButtonClicked() {
+        window.updaterAPI.onCancelButtonClicked();
     }
 
     /**
