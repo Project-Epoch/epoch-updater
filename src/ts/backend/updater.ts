@@ -70,14 +70,6 @@ export class Updater {
             });
         });
 
-        request.on('finish', () => {
-            console.log('Request is Finished')
-        });
-
-        request.on('abort', () => {
-            console.log('Request is Aborted')
-        });
-
         request.on('error', (error) => {
             this.onManifestFailure(error);
         });
@@ -221,6 +213,7 @@ export class Updater {
             removeOnStop: true,
             removeOnFail: true,
             timeout: 60000,
+            progressThrottle: 1000,
             retry: {
                 maxRetries: 3,
                 delay: 5000,
@@ -234,6 +227,10 @@ export class Updater {
 
         this.currentDownload.on('progress', (stats) => { 
             WindowManager.get().webContents.send('download-progress', stats.total, stats.name, stats.downloaded, stats.progress, stats.speed);
+        });
+
+        this.currentDownload.on('progress.throttled', (stats) => {
+            WindowManager.get().webContents.send('download-progress-throttled', stats.total, stats.name, stats.downloaded, stats.progress, stats.speed);
         });
 
         this.currentDownload.on('error', (stats) => {
