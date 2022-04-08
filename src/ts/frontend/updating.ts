@@ -52,6 +52,11 @@ export class Updating {
         window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
+    
+        /** Modal Events */
+        document.getElementById('installModal').addEventListener('hidden.bs.modal', function (event) {
+            hide(document.getElementById('client-path-error-display'));
+        });
     }
 
     /**
@@ -92,8 +97,14 @@ export class Updating {
      * @param message The reason why it was invalid.
      */
     onInvalidDirectoryChosen(message: string) {
-        show(this.directoryErrorContainer);
-        this.directoryErrorMessage.innerText = message;
+        console.log('onInvalidDirectoryChosen');
+        console.log(message);
+
+        let container = document.getElementById('client-path-error-display');
+        let error = document.getElementById('client-path-error-text');
+
+        show(container);
+        error.innerText = message;
     }
 
     /**

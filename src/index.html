@@ -16,7 +16,6 @@
                     <div class="modal-content rounded-0 modal-background">
                         <div class="modal-header">
                             <h5 class="modal-title text-white" id="installModalLabel">Install Project Epoch</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -28,27 +27,18 @@
                                 </div>
                             </div>
 
-                            <div class="row" id="client-path-display" hidden>
-                                <div class="col-12">
-                                    <hr>
-                                    <p class="mt-4">
-                                        <strong>Chosen Directory: </strong> <span id="client-path-text">None</span>
-                                    </p>
-                                </div>
-                            </div>
-
                             <div class="row" id="client-path-error-display" hidden>
+                                <hr>
                                 <div class="col-12">
-                                    <hr>
-                                    <p class="mt-4" id="client-path-error-text text-danger">
-                                        Something Went Wrong.
+                                    <p class="mt-4 text-danger text-center" id="client-path-error-text">
+                                        <strong>Something Went Wrong.</strong> 
                                     </p>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary rounded-0" id="install-choose-directory">Choose Directory</button>
-                            <button type="button" class="btn btn-secondary rounded-0" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger rounded-0" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
