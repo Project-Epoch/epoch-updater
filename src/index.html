@@ -1,12 +1,154 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello World!</title>
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Project Epoch Updater</title>
 
-  </head>
-  <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
-  </body>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+
+    <body class="app-background" style="background: url('assets/background.jpg');">
+        <div class="container-fluid">
+            <!-- Modals - Install -->
+            <div class="modal fade" id="installModal" tabindex="-1" aria-labelledby="installModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content rounded-0 modal-background">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="installModalLabel">Install Project Epoch</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="text-warning">
+                                        If you have an existing 3.3.5a enUS client feel free to select it as your install location to expedite the install process and lower the download size to approximately <strong>1gb</strong>. However, if you do not have an existing client select an empty directory and a full install will begin which requires approximately <strong>17.4gb</strong> of storage.
+                                    </p>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="row" id="client-path-error-display" hidden>
+                                <hr>
+                                <div class="col-12">
+                                    <p class="mt-4 text-danger text-center" id="client-path-error-text">
+                                        <strong>Something Went Wrong.</strong> 
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary rounded-0" id="install-choose-directory">Choose Directory</button>
+                            <button type="button" class="btn btn-danger rounded-0" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Header / Nav -->
+            <div class="row">
+                <!-- Window Controls -->
+                <div class="position-relative">
+                    <div class="position-absolute top-0 end-0">
+                        <ul class="nav">
+                            <!-- Minimize -->
+                            <li class="nav-item">
+                                <a class="nav-link text-muted window-control" id="window-minimize">
+                                    <i class="fa-solid fa-minus"></i>
+                                </a>
+                            </li>
+
+                            <!-- Close -->
+                            <li class="nav-item">
+                                <a class="nav-link text-muted window-control" id="window-close">
+                                    <i class="fa-solid fa-times"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <img src="assets/logo.png" class="rounded float-start">
+                </div>
+
+                <div class="col-6">
+                    <ul class="nav mt-5 mx-5 float-end">
+                        <!-- Blog Link -->
+                        <li class="nav-item">
+                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://blog.project-epoch.net/" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Blog">
+                                <i class="fa-solid fa-blog"></i>
+                            </a>
+                        </li>
+
+                        <!-- Discord -->
+                        <li class="nav-item">
+                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://discord.gg/dKNUv3Wag8" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Discord">
+                                <i class="fa-brands fa-discord"></i>
+                            </a>
+                        </li>
+
+                        <!-- YouTube Link -->
+                        <li class="nav-item">
+                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw" data-bs-toggle="tooltip" data-bs-placement="bottom" title="YouTube">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a>
+                        </li>
+                      </ul>
+                </div>
+            </div>
+
+            <!-- Images Section. -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card news-card border-dark blur">
+                        <div class="row g-0">
+                            <div class="col-md-8">
+                                <img src="assets/news/zeppelins.jpg" class="img-fluid rounded-0" id="news-image">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card-body">
+                                    <h3 class="card-title text-white mb-4 lead" id="news-title">...</h3>
+                                    <p class="card-text text-warning font-weight-light" id="news-description">
+                                        ...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section. -->
+            <div class="row fixed-row-bottom">
+                <div class="col-9">
+                    <div id="progress-bar-container" hidden>
+                        <div class="progress-text">
+                            <span class="text-light text-monospace" id="progress-bar-text">Getting Patch Manifest...</span>
+                            <span class="text-light text-monospace float-end" id="progress-bar-end-text"></span>
+                        </div>
+    
+                        <div class="progress mt-1 rounded-0">
+                            <div class="progress-bar" role="progressbar" id="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 col-3">
+                    <!-- Initialising Button -->
+                    <button type="button" id="initialising-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" disabled>Initialising</button>
+
+                    <!-- Install Button -->
+                    <button type="button" id="install-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" data-bs-toggle="modal" data-bs-target="#installModal" hidden>Install</button>
+
+                    <!-- Update Button -->
+                    <button type="button" id="update-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" hidden>Update</button>
+
+                    <!-- Cancel Button -->
+                    <button type="button" id="cancel-button" class="btn btn-danger btn-lg mb-4 px-5 float-end rounded-0" hidden>Cancel</button>
+
+                    <!-- Play Button -->
+                    <button type="button" id="play-button" class="btn btn-success btn-lg mb-4 px-5 float-end rounded-0" hidden>Play</button>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

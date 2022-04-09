@@ -26,4 +26,39 @@ module.exports = [
       },
     },
   },
+  {
+    test: /\.(scss)$/, // all scss files will be handled
+    // Use loaders in that specific reverse order
+    use: [
+      {
+        loader: 'style-loader',
+      },
+      {
+        loader: 'css-loader',
+      },
+      {
+        loader: 'sass-loader'
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          postcssOptions: {
+            plugins: function () {
+              return [
+                require('autoprefixer')
+              ];
+            }
+          }
+        }
+      },
+    ]
+  },
+  {
+    test: /\.(png|jpeg|jpg|gif|ico|svg)$/, // We will handle of these file extensions
+    use: [
+      {
+        loader: "file-loader",
+      }
+    ]
+  },
 ];
