@@ -63,6 +63,8 @@ class Main {
      * up our initial updater state.
      */
     onWindowRendered() {
+        WindowManager.get().show();
+
         /** User has either not set directory yet or has moved their client. */
         if (! ClientManager.hasClientDirectory() || ! ClientManager.isWarcraftDirectory(ClientManager.getClientDirectory())) {
             UpdateManager.setState(UpdateState.SETUP);

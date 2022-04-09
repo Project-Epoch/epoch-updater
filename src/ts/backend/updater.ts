@@ -65,8 +65,14 @@ export class Updater {
         });
 
         request.on('response', (response) => {
+            let result = '';
+
             response.on('data', (chunk) => {
-                this.onManifestReceived(JSON.parse(chunk.toString()));
+                result += chunk.toString();
+            });
+
+            response.on('end', () => {
+                this.processManifestResponse(JSON.parse(result));
             });
         });
 
@@ -76,6 +82,17 @@ export class Updater {
 
         request.setHeader('Content-Type', 'application/json');
         request.end();
+    }
+
+    /**
+     * Fires when we've got a response from the Manifest 
+     * API endpoint.
+     * @param response 
+     */
+    processManifestResponse(response: any) {
+        if (response.hasOwnProperty('Version')) {
+            this.onManifestReceived(response);
+        }
     }
 
     /**
@@ -91,7 +108,7 @@ export class Updater {
      * Fired when getting the Manifest Fails.
      */
     onManifestFailure(error: Error) {
-
+        console.log(error.message);
     }
 
     /**

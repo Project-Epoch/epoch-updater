@@ -25,10 +25,6 @@ export class Window {
             }
         });
 
-        this.window.once('ready-to-show', () => {
-            this.window.show();
-        });
-
         this.window.loadURL(entrypoint);
         this.window.setMenuBarVisibility(false);
 
