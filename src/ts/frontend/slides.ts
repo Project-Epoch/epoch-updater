@@ -13,7 +13,7 @@ export class Slides {
     private slides: Array<NewsItem> = [
         {
             title: 'Adventure Awaits',
-            description: 'Here at Project Epoch we are working tirelessly to provide you with a whole new experience. Bringing back the old school mystery and adventure we all sorely miss from Classic.<br><br>You will find hundreds of new quests, new NPC\'s, rewarding reputations and much much more.<br><br>Explore every nook and cranny like the days of old.',
+            description: 'Here at Project Epoch we are working tirelessly to provide you with a whole new experience. Bringing back the old school mystery and adventure we all sorely miss from Classic.<br><br>You will find hundreds of new quests, NPC\'s, rewarding reputations and much much more.<br><br>Explore every nook and cranny like the days of old.',
             path: 'assets/news/zeppelins.jpg',
         },
         {
