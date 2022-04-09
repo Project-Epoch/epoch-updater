@@ -10,7 +10,7 @@ if (require('electron-squirrel-startup')) {
     app.quit();
 }
 
-const server = "electron-deploy-j1bpx82a5-kaytotes.vercel.app"
+const server = "https://electron-deploy-six.vercel.app"
 const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 if (app.isPackaged) {
