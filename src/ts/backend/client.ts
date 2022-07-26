@@ -1,5 +1,5 @@
 import { SettingsManager } from './settings';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { WindowManager } from './window';
 import { dialog } from 'electron';
 import cp from "child_process";
@@ -127,6 +127,9 @@ export class Client {
     open() {
         let exe = 'Project-Epoch.exe';
         let path = `${this.getClientDirectory()}\\${exe}`;
+
+        /** Clean Cache. */
+        fs.removeSync(`${this.getClientDirectory()}\\Cache`);
 
         cp.exec(path);
     }
