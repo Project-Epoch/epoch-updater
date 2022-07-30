@@ -20,6 +20,12 @@ export class Client {
 
         let dir = result.filePaths[0];
 
+        /** Pressed Cancel. */
+        if (dir === undefined) {
+            WindowManager.get().webContents.send('invalid-install-directory-chosen', 'Must choose a directory.');
+            return;
+        }
+
         if (this.isEmpty(dir)) {
             WindowManager.get().webContents.send('valid-install-directory-chosen', dir);
             this.setClientDirectory(dir);
