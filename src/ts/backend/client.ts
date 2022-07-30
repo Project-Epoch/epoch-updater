@@ -82,11 +82,6 @@ export class Client {
      * @param path The Directory we're checking.
      */
     isWarcraftDirectory(path: string): boolean {
-        /** Exe doesn't exist. */
-        if (! fs.existsSync(`${path}\\WowError.exe`)) {
-            return false;
-        }
-
         /** Battlenet dll doesn't exist. */
         if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
             return false;
@@ -94,6 +89,16 @@ export class Client {
 
         /** Data Directory Doesnt Exists. */
         if (! fs.existsSync(`${path}\\Data\\`)) {
+            return false;
+        }
+
+        /** Check First Patch. */
+        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
+            return false;
+        }
+
+        /** Check Second Patch. */
+        if (! fs.existsSync(`${path}\\Data\\patch-3.MPQ`)) {
             return false;
         }
 
