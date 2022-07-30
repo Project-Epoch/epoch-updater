@@ -20,6 +20,12 @@ export class Client {
 
         let dir = result.filePaths[0];
 
+        /** Pressed Cancel. */
+        if (dir === undefined) {
+            WindowManager.get().webContents.send('invalid-install-directory-chosen', 'Must choose a directory.');
+            return;
+        }
+
         if (this.isEmpty(dir)) {
             WindowManager.get().webContents.send('valid-install-directory-chosen', dir);
             this.setClientDirectory(dir);
@@ -76,11 +82,6 @@ export class Client {
      * @param path The Directory we're checking.
      */
     isWarcraftDirectory(path: string): boolean {
-        /** Exe doesn't exist. */
-        if (! fs.existsSync(`${path}\\WowError.exe`)) {
-            return false;
-        }
-
         /** Battlenet dll doesn't exist. */
         if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
             return false;
@@ -88,6 +89,16 @@ export class Client {
 
         /** Data Directory Doesnt Exists. */
         if (! fs.existsSync(`${path}\\Data\\`)) {
+            return false;
+        }
+
+        /** Check First Patch. */
+        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
+            return false;
+        }
+
+        /** Check Second Patch. */
+        if (! fs.existsSync(`${path}\\Data\\patch-3.MPQ`)) {
             return false;
         }
 
@@ -131,7 +142,7 @@ export class Client {
         /** Clean Cache. */
         fs.removeSync(`${this.getClientDirectory()}\\Cache`);
 
-        cp.exec(path);
+        cp.exec(`"${path}"`);
     }
 }
 
