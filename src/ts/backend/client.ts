@@ -131,7 +131,7 @@ export class Client {
         /** Clean Cache. */
         fs.removeSync(`${this.getClientDirectory()}\\Cache`);
 
-        cp.exec(path);
+        cp.exec(`"${path}"`);
     }
 }
 
