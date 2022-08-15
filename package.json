@@ -1,6 +1,6 @@
 {
   "name": "epoch-updater",
-  "productName": "Project Epoch Updater",
+  "productName": "Project Epoch",
   "version": "1.0.7",
   "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
@@ -13,8 +13,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "Kaytotes",
-    "email": "me@kaytotes.online"
+    "name": "Project Epoch",
+    "email": "support@project-epoch.net"
   },
   "license": "MIT",
   "config": {
