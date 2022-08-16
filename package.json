@@ -1,7 +1,7 @@
 {
   "name": "epoch-updater",
   "productName": "Project Epoch",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
   "scripts": {
