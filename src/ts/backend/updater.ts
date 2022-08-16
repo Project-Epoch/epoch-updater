@@ -210,7 +210,7 @@ export class Updater {
                 fs.mkdirSync(directory, { recursive: true });
             }
             
-            await this.download(element.URL, directory, filename, index);
+            await this.download(element.URL, directory, filename, index, this.updatableFiles.length);
         }
 
         this.checkIntegrity(this.manifest);
@@ -231,8 +231,9 @@ export class Updater {
      * @param directory The directory where we should save it.
      * @param filename The filename to give it.
      * @param index And out of all our downloads which is this.
+     * @param total How many total files do we have.
      */
-    async download(url: string, directory: string, filename: string, index: number) {
+    async download(url: string, directory: string, filename: string, index: number, total: number) {
         this.currentDownload = new DownloaderHelper(url, directory, {
             override: true,
             removeOnStop: true,
@@ -246,7 +247,7 @@ export class Updater {
         });
 
         this.currentDownload.on('start', () => {
-            WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1);
+            WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1, total);
             this.remainingFiles--;
         });
 
