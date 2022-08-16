@@ -4,6 +4,7 @@ import fs from 'fs';
 import { ClientManager } from "./client";
 import { DownloaderHelper } from "node-downloader-helper";
 import md5File from 'md5-file';
+import { SettingsManager } from "./settings";
 
 /**
  * The various States of the Updater Process.
@@ -56,11 +57,14 @@ export class Updater {
      * Gets the Patch Manifest from our updater API.
      */
     getManifest() {
+        const environment = SettingsManager.storage().get('environment');
+        const key = SettingsManager.storage().get('key');
+
         const request = net.request({
             method: 'GET',
             protocol: app.isPackaged ? 'https:' : 'http:',
             hostname: this.manifestHost,
-            path: '/api/manifest',
+            path: `/api/manifest?environment=${environment}&internal_key=${key}`,
             redirect: 'error'
         });
 
@@ -92,6 +96,9 @@ export class Updater {
     processManifestResponse(response: any) {
         if (response.hasOwnProperty('Version')) {
             this.onManifestReceived(response);
+        } else {
+            console.log('Unexpected Response');
+            console.log(response);
         }
     }
 
