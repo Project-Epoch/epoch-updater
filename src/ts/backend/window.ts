@@ -16,6 +16,7 @@ export class Window {
             height: 680,
             resizable: false,
             maximizable: false,
+            fullscreenable:false,
             titleBarStyle: 'hidden',
             show: false,
             webPreferences: {

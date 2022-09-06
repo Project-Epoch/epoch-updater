@@ -5,6 +5,8 @@ import Store, { Schema } from 'electron-store';
  */
 interface SettingStructure {
     clientDirectory: string;
+    environment: string;
+    key: string;
 }
 
 /**
@@ -12,6 +14,14 @@ interface SettingStructure {
  */
 const schema: Schema<SettingStructure> = {
     clientDirectory: {
+        type: 'string',
+        default: '',
+    },
+    environment: {
+        type: 'string',
+        default: 'production',
+    },
+    key: {
         type: 'string',
         default: '',
     },

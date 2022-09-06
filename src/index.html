@@ -5,7 +5,7 @@
 
         <!-- Required meta tags -->
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
     </head>
 
     <body class="app-background" style="background: url('assets/background.jpg');">
@@ -13,7 +13,7 @@
             <!-- Modals - Install -->
             <div class="modal fade" id="installModal" tabindex="-1" aria-labelledby="installModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content rounded-0 modal-background">
+                    <div class="modal-content rounded-3 modal-background">
                         <div class="modal-header">
                             <h5 class="modal-title text-white" id="installModalLabel">Install Project Epoch</h5>
                         </div>
@@ -37,8 +37,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary rounded-0" id="install-choose-directory">Choose Directory</button>
-                            <button type="button" class="btn btn-danger rounded-0" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary rounded-3" id="install-choose-directory">Choose Directory</button>
+                            <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -127,26 +127,26 @@
                             <span class="text-light text-monospace float-end" id="progress-bar-end-text"></span>
                         </div>
     
-                        <div class="progress mt-1 rounded-0">
+                        <div class="progress mt-1 rounded-3">
                             <div class="progress-bar" role="progressbar" id="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                 </div>
                 <div class="d-grid gap-2 col-3">
                     <!-- Initialising Button -->
-                    <button type="button" id="initialising-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" disabled>Initialising</button>
+                    <button type="button" id="initialising-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-3" disabled>Initialising</button>
 
                     <!-- Install Button -->
-                    <button type="button" id="install-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" data-bs-toggle="modal" data-bs-target="#installModal" hidden>Install</button>
+                    <button type="button" id="install-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-3" data-bs-toggle="modal" data-bs-target="#installModal" hidden>Install</button>
 
                     <!-- Update Button -->
-                    <button type="button" id="update-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-0" hidden>Update</button>
+                    <button type="button" id="update-button" class="btn btn-primary btn-lg mb-4 px-5 float-end rounded-3" hidden>Update</button>
 
                     <!-- Cancel Button -->
-                    <button type="button" id="cancel-button" class="btn btn-danger btn-lg mb-4 px-5 float-end rounded-0" hidden>Cancel</button>
+                    <button type="button" id="cancel-button" class="btn btn-danger btn-lg mb-4 px-5 float-end rounded-3" hidden>Cancel</button>
 
                     <!-- Play Button -->
-                    <button type="button" id="play-button" class="btn btn-success btn-lg mb-4 px-5 float-end rounded-0" hidden>Play</button>
+                    <button type="button" id="play-button" class="btn btn-success btn-lg mb-4 px-5 float-end rounded-3" hidden>Play</button>
                 </div>
             </div>
         </div>

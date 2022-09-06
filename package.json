@@ -1,7 +1,7 @@
 {
   "name": "epoch-updater",
   "productName": "Project Epoch Updater",
-  "version": "1.0.6",
+  "version": "1.0.11",
   "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
   "scripts": {
@@ -13,8 +13,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "Kaytotes",
-    "email": "me@kaytotes.online"
+    "name": "Project Epoch",
+    "email": "support@project-epoch.net"
   },
   "license": "MIT",
   "config": {
@@ -27,7 +27,7 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "setupIcon": "./assets/epoch.ico",
-            "title": "Project Epoch Updater",
+            "title": "Project Epoch",
             "name": "ProjectEpochUpdater",
             "authors": "Project Epoch",
             "description": "The Game Client Updater for Project Epoch.",

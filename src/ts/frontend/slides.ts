@@ -23,7 +23,7 @@ export class Slides {
         },
         {
             title: 'Looking For More',
-            description: 'Awaiting you at level 60 is a wealth of difficult content to tackle. Onyxia the Broodmother and her two key allies await in her lair.<br><br>Form a group of 40 stalwart heroes to take her down alongside two new bosses and tough new mechanics to claim your epic rewards.',
+            description: 'Awaiting you at level 60 is a wealth of difficult content to tackle. Onyxia the Broodmother and her two key allies await in her lair.<br><br>Form a group of 25 stalwart heroes to take her down alongside two new bosses and tough new mechanics to claim your epic rewards.',
             path: 'assets/news/onyxia.jpg',
         },
     ];

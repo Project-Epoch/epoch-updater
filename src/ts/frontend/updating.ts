@@ -49,7 +49,7 @@ export class Updating {
         this.cancelButton.addEventListener('click', () => { this.onCancelButtonClicked(); });
 
         /** Download Events. */
-        window.updaterAPI.onDownloadStart((filename, total, index) => { this.onDownloadStart(filename, total, index); });
+        window.updaterAPI.onDownloadStart((filename, remaining, index, total) => { this.onDownloadStart(filename, remaining, index, total); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
         window.updaterAPI.onVersionReceived((version) => { this.onVersionReceived(version); });
@@ -253,12 +253,13 @@ export class Updating {
     /**
      * Fires each time a new file download begins.
      * @param filename The file that started.
-     * @param total Total number of files.
+     * @param remaining Total remaining number of files.
      * @param index Current file out of that total.
+     * @param total Current total files.
      */
-    onDownloadStart(filename: string, total: number, index: number) {
+    onDownloadStart(filename: string, remaining: number, index: number, total: number) {
         show(this.progressBarEndText);
-        this.progressBarText.innerText = `Current File: ${filename}`;
+        this.progressBarText.innerText = `Current File (${index}/${total}): ${filename}`;
         this.setProgressBarPercentage(0, 100);
     }
 
