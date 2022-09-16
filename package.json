@@ -111,6 +111,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
     "electron-unhandled": "^4.0.1",
+    "is-elevated": "^4.0.0",
     "md5-file": "^5.0.0",
     "node-downloader-helper": "^2.1.0",
     "update-electron-app": "^2.0.1"
