@@ -80,26 +80,26 @@ export class Client {
      * Given a Directory it will check to see if it is a Warcraft 
      * Directory based on whether it has a Data subdir and 
      * specific MPQ.
-     * @param warcraft_path The Directory we're checking.
+     * @param gameDirPath The Directory we're checking.
      */
-    isWarcraftDirectory(warcraft_path: string): boolean {
+    isWarcraftDirectory(gameDirPath: string): boolean {
         /** Battlenet dll doesn't exist. */
-        if (! fs.existsSync(path.join(warcraft_path, 'Battle.net.dll'))) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Battle.net.dll'))) {
             return false;
         }
 
         /** Data Directory Doesnt Exists. */
-        if (! fs.existsSync(path.join(warcraft_path, 'Data'))) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data'))) {
             return false;
         }
 
         /** Check First Patch. */
-        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'lichking.MPQ'))) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'lichking.MPQ'))) {
             return false;
         }
 
         /** Check Second Patch. */
-        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'patch-3.MPQ'))) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'patch-3.MPQ'))) {
             return false;
         }
 
@@ -119,18 +119,31 @@ export class Client {
      * of the locale enUS.
      * @param path The directory we're checking.
      */
-    isCorrectLocale(warcraft_path: string): boolean {
+    isCorrectLocale(gameDirPath: string): boolean {
         /** enUS Locale Doesn't Exist. */
-        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'enUS'))) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'enUS'))) {
             return false;
         }
 
         /** Double check with an MPQ. */
-        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'enUS', 'locale-enUS.MPQ'))) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'enUS', 'locale-enUS.MPQ'))) {
             return false;
         }
 
         return true;
+    }
+
+    constructStartupCommand(executablePath: string): string {
+        switch (process.platform) {
+            case 'linux': {
+                // We use a separate winePrefix, but don't need to do any special setup (it should work out of the box).
+                const winePrefix = path.join(this.getClientDirectory(), '.wine');
+                return `WINEPREFIX="${winePrefix}" wine "${executablePath}"`;
+            }
+        
+            default:
+                return `${executablePath}`;
+        }
     }
 
     /**
@@ -138,12 +151,13 @@ export class Client {
      */
     open() {
         const exe = 'Project-Epoch.exe';
-        const exe_path = path.join(this.getClientDirectory(), exe);
+        const executablePath = path.join(this.getClientDirectory(), exe);
 
         /** Clean Cache. */
         fs.removeSync(path.join(this.getClientDirectory(), 'Cache'));
 
-        cp.exec(`"${exe_path}"`);
+        const command = this.constructStartupCommand(executablePath);
+        cp.exec(command);
     }
 }
 
