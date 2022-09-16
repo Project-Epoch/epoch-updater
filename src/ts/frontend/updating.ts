@@ -14,6 +14,8 @@ export class Updating {
     private chooseDirectoryButton: HTMLElement;
     private directoryErrorContainer: HTMLElement;
     private directoryErrorMessage: HTMLElement;
+    private elevationModal: HTMLElement;
+    private elevationButton: HTMLElement;
 
     /** Progress Bar Elements. */
     private progressBarContainer: HTMLElement;
@@ -38,6 +40,8 @@ export class Updating {
         this.progressBarText = document.getElementById('progress-bar-text');
         this.progressBarEndText = document.getElementById('progress-bar-end-text');
         this.installModal = document.getElementById('installModal');
+        this.elevationModal = document.getElementById('elevationModal');
+        this.elevationButton = document.getElementById('elevation-understand');
 
         /** Register Callbacks. */
         window.updaterAPI.onStateChanged((state) => { this.onStateChanged(state); });
@@ -47,6 +51,7 @@ export class Updating {
         this.playButton.addEventListener('click', () => { this.onPlayButtonClicked(); });
         this.updateButton.addEventListener('click', () => { this.onUpdateButtonClicked(); });
         this.cancelButton.addEventListener('click', () => { this.onCancelButtonClicked(); });
+        this.elevationButton.addEventListener('click', () => { window.windowAPI.close(); });
 
         /** Download Events. */
         window.updaterAPI.onDownloadStart((filename, remaining, index, total) => { this.onDownloadStart(filename, remaining, index, total); });
@@ -135,6 +140,10 @@ export class Updating {
             case 'done':
                 this.onDoneState();
                 break;
+
+            case 'requires-elevation':
+                this.onElevationRequiredState();
+                break;
         
             default:
                 console.log(`Frontend - Unexpected State: ${state}`);
@@ -205,6 +214,14 @@ export class Updating {
 
         /** Reset Bar. */
         this.setProgressBarPercentage(100, 100);
+    }
+
+    /**
+     * Fires when we have detected that UAC is required.
+     */
+    onElevationRequiredState() {
+        const uacModal = new Modal(this.elevationModal);
+        uacModal.show();
     }
 
     /**
