@@ -1,5 +1,6 @@
 import { SettingsManager } from './settings';
 import fs from 'fs-extra';
+import path from 'path';
 import { WindowManager } from './window';
 import { dialog } from 'electron';
 import cp from "child_process";
@@ -18,7 +19,7 @@ export class Client {
             properties: ['openDirectory']
         });
 
-        let dir = result.filePaths[0];
+        const dir = result.filePaths[0];
 
         /** Pressed Cancel. */
         if (dir === undefined) {
@@ -79,26 +80,26 @@ export class Client {
      * Given a Directory it will check to see if it is a Warcraft 
      * Directory based on whether it has a Data subdir and 
      * specific MPQ.
-     * @param path The Directory we're checking.
+     * @param warcraft_path The Directory we're checking.
      */
-    isWarcraftDirectory(path: string): boolean {
+    isWarcraftDirectory(warcraft_path: string): boolean {
         /** Battlenet dll doesn't exist. */
-        if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
+        if (! fs.existsSync(path.join(warcraft_path, 'Battle.net.dll'))) {
             return false;
         }
 
         /** Data Directory Doesnt Exists. */
-        if (! fs.existsSync(`${path}\\Data\\`)) {
+        if (! fs.existsSync(path.join(warcraft_path, 'Data'))) {
             return false;
         }
 
         /** Check First Patch. */
-        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
+        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'lichking.MPQ'))) {
             return false;
         }
 
         /** Check Second Patch. */
-        if (! fs.existsSync(`${path}\\Data\\patch-3.MPQ`)) {
+        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'patch-3.MPQ'))) {
             return false;
         }
 
@@ -118,14 +119,14 @@ export class Client {
      * of the locale enUS.
      * @param path The directory we're checking.
      */
-    isCorrectLocale(path: string): boolean {
+    isCorrectLocale(warcraft_path: string): boolean {
         /** enUS Locale Doesn't Exist. */
-        if (! fs.existsSync(`${path}\\Data\\enUS\\`)) {
+        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'enUS'))) {
             return false;
         }
 
         /** Double check with an MPQ. */
-        if (! fs.existsSync(`${path}\\Data\\enUS\\locale-enUS.MPQ`)) {
+        if (! fs.existsSync(path.join(warcraft_path, 'Data', 'enUS', 'locale-enUS.MPQ'))) {
             return false;
         }
 
@@ -136,13 +137,13 @@ export class Client {
      * Attempts to open the WoW Client Exe.
      */
     open() {
-        let exe = 'Project-Epoch.exe';
-        let path = `${this.getClientDirectory()}\\${exe}`;
+        const exe = 'Project-Epoch.exe';
+        const exe_path = path.join(this.getClientDirectory(), exe);
 
         /** Clean Cache. */
-        fs.removeSync(`${this.getClientDirectory()}\\Cache`);
+        fs.removeSync(path.join(this.getClientDirectory(), 'Cache'));
 
-        cp.exec(`"${path}"`);
+        cp.exec(`"${exe_path}"`);
     }
 }
 
