@@ -9,6 +9,8 @@ import cp from "child_process";
  * A class to handle interacting with the Client.
  */
 export class Client {
+    private EXECUTABLE_NAME = 'Project-Epoch.exe';
+
     /**
      * Triggered by the Frontend. Allows us to choose a Directory 
      * where the Client will be installed.
@@ -133,10 +135,13 @@ export class Client {
         return true;
     }
 
-    constructStartupCommand(executablePath: string): string {
+    constructStartupCommand(): string {
+        const executablePath = path.join(this.getClientDirectory(), this.EXECUTABLE_NAME);
+
         switch (process.platform) {
             case 'linux': {
-                // We use a separate winePrefix, but don't need to do any special setup (it should work out of the box).
+                // We use a separate WINEPREFIX to avoid any side-effects from the user defaults,
+                // but don't need to do any special setup (it should work out of the box).
                 const winePrefix = path.join(this.getClientDirectory(), '.wine');
                 return `WINEPREFIX="${winePrefix}" wine "${executablePath}"`;
             }
@@ -150,13 +155,10 @@ export class Client {
      * Attempts to open the WoW Client Exe.
      */
     open() {
-        const exe = 'Project-Epoch.exe';
-        const executablePath = path.join(this.getClientDirectory(), exe);
-
         /** Clean Cache. */
         fs.removeSync(path.join(this.getClientDirectory(), 'Cache'));
 
-        const command = this.constructStartupCommand(executablePath);
+        const command = this.constructStartupCommand();
         cp.exec(command);
     }
 }
