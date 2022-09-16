@@ -1,6 +1,6 @@
 {
   "name": "epoch-updater",
-  "productName": "Project Epoch Updater",
+  "productName": "epoch-updater",
   "version": "1.0.11",
   "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
@@ -29,6 +29,7 @@
             "setupIcon": "./assets/epoch.ico",
             "title": "Project Epoch",
             "name": "ProjectEpochUpdater",
+            "productName": "Project Epoch Updater",
             "authors": "Project Epoch",
             "description": "The Game Client Updater for Project Epoch.",
             "exe": "Project Epoch Updater.exe",
