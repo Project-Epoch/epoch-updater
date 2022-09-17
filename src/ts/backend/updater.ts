@@ -136,6 +136,8 @@ export class Updater {
             return;
         }
 
+        WindowManager.get().webContents.send('client-directory-loaded', ClientManager.getClientDirectory());
+
         for (let index = 0; index < manifest.Files.length; index++) {
             let element = manifest.Files[index];
             let localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;

@@ -17,6 +17,10 @@ export class Updating {
     private elevationModal: HTMLElement;
     private elevationButton: HTMLElement;
 
+    /** Directory Display */
+    private clientDirectoryCard: HTMLElement;
+    private clientDirectoryPath: HTMLElement;
+
     /** Progress Bar Elements. */
     private progressBarContainer: HTMLElement;
     private progressBar: HTMLElement;
@@ -42,6 +46,8 @@ export class Updating {
         this.installModal = document.getElementById('installModal');
         this.elevationModal = document.getElementById('elevationModal');
         this.elevationButton = document.getElementById('elevation-understand');
+        this.clientDirectoryCard = document.getElementById('directory-card');
+        this.clientDirectoryPath = document.getElementById('directory-display-path');
 
         /** Register Callbacks. */
         window.updaterAPI.onStateChanged((state) => { this.onStateChanged(state); });
@@ -58,6 +64,7 @@ export class Updating {
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
         window.updaterAPI.onVersionReceived((version) => { this.onVersionReceived(version); });
+        window.updaterAPI.onClientDirectoryLoaded((path) => { this.displayClientLocation(path); });
     
         /** Modal Events */
         document.getElementById('installModal').addEventListener('hidden.bs.modal', function (event) {
@@ -310,6 +317,15 @@ export class Updating {
 
         this.progressBar.style.width = `${percent}%`;
         this.progressBar.ariaValueNow = `${percent}`;
+    }
+
+    /**
+     * Displays where the user is / has installed their game.
+     * @param path 
+     */
+    displayClientLocation(path: string) {
+        this.clientDirectoryPath.innerText = path;
+        show(this.clientDirectoryCard);
     }
 
     /**
