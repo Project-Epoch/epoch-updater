@@ -108,6 +108,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.1.1",
     "@popperjs/core": "^2.11.4",
+    "electron-log": "^4.4.8",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",
     "electron-unhandled": "^4.0.1",
