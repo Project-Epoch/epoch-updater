@@ -23,7 +23,10 @@
                                     <p class="text-warning">
                                         If you have an existing 3.3.5a enUS client feel free to select it as your install location to expedite the install process and lower the download size to approximately <strong>1gb</strong>. However, if you do not have an existing client select an empty directory and a full install will begin which requires approximately <strong>17.4gb</strong> of storage.
                                     </p>
-                                    
+                                    <br>
+                                    <p class="text-warning">
+                                        Warning: Choosing your "Program Files" directory under the C: Drive will require running with Admin privileges for all updates. We have left this as a personal choice.
+                                    </p>
                                 </div>
                             </div>
 
@@ -39,6 +42,32 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary rounded-3" id="install-choose-directory">Choose Directory</button>
                             <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modals - Elevation Required -->
+            <div class="modal fade" id="elevationModal" tabindex="-1" aria-labelledby="elevationModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content rounded-3 modal-background">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="elevationModalLabel">Elevated Privileges Required</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="text-warning">
+                                        Due to Windows User Access Control installing to "C:\\Program Files (x86)" or "C:\\Program Files" requires running the updater with Administrator rights.
+                                        <br>
+                                        <br>
+                                        Please exit and re-open as Administrator.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary rounded-3" id="elevation-understand">I Understand</button>
                         </div>
                     </div>
                 </div>
@@ -113,6 +142,17 @@
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="directory-card" hidden>
+                <div class="col-12">
+                    <div class="card border-dark blur directory-card mt-1">
+                        <div class="card-body mt-0 mb-0 py-1">
+                            <i class="fa-regular fa-folder-open text-warning"></i>
+                            <span class="text-warning">Game Directory - </span> <span class="text-white" id="directory-display-path"></span>
                         </div>
                     </div>
                 </div>

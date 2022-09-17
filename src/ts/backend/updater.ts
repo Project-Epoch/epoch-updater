@@ -5,6 +5,7 @@ import { ClientManager } from "./client";
 import { DownloaderHelper } from "node-downloader-helper";
 import md5File from 'md5-file';
 import { SettingsManager } from "./settings";
+import isElevated from "is-elevated";
 
 /**
  * The various States of the Updater Process.
@@ -16,6 +17,7 @@ export enum UpdateState {
     VERIFYING_INTEGRITY = 'verifying-integrity',
     UPDATE_AVAILABLE = 'update-available',
     DOWNLOADING = 'downloading',
+    REQUIRES_ELEVATION = 'requires-elevation',
     DONE = 'done',
 }
 
@@ -125,6 +127,16 @@ export class Updater {
     async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
         this.updatableFiles = [];
+
+        /** Check UAC */
+        const elevated = await isElevated();
+        if (ClientManager.requiresElevation(ClientManager.getClientDirectory()) && ! elevated) {
+            this.setState(UpdateState.REQUIRES_ELEVATION);
+
+            return;
+        }
+
+        WindowManager.get().webContents.send('client-directory-loaded', ClientManager.getClientDirectory());
 
         for (let index = 0; index < manifest.Files.length; index++) {
             let element = manifest.Files[index];
