@@ -43,6 +43,8 @@ export type UpdaterAPI = {
     onCancelButtonClicked: () => void;
 
     onVersionReceived: (callback: (version: string) => void) => void;
+
+    onClientDirectoryLoaded: (callback: (path: string) => void) => void;
 }
 
 const updaterAPI: UpdaterAPI = {
@@ -64,6 +66,8 @@ const updaterAPI: UpdaterAPI = {
     onCancelButtonClicked: () => { ipcRenderer.send('on-cancel-button-clicked'); },
 
     onVersionReceived: (callback: Function) => ipcRenderer.on('version-received', (event, version) => { callback(version); }),
+
+    onClientDirectoryLoaded: (callback: Function) => ipcRenderer.on('client-directory-loaded', (event, path) => { callback(path); }),
 }
 
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */
