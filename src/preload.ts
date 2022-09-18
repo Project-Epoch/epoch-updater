@@ -5,13 +5,15 @@ export type WindowManagementAPI = {
     rendered: () => void;
     close: () => void;
     minimize: () => void;
+    onVersionReceived: (callback: (version: string) => void) => void;
 }
 
 /** Implement those functions, basically just pass to IPC. */
 const windowAPI: WindowManagementAPI = {
     rendered: () => { ipcRenderer.send('window-rendered'); },
     close: () => { ipcRenderer.send('window-close'); },
-    minimize: () => { ipcRenderer.send('window-minimize'); }
+    minimize: () => { ipcRenderer.send('window-minimize'); },
+    onVersionReceived: (callback: Function) => ipcRenderer.on('launcher-version-received', (event, version) => { callback(version); }),
 }
 
 /** Used to open Navigation Links in Browser. */

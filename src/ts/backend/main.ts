@@ -65,6 +65,8 @@ class Main {
     onWindowRendered() {
         WindowManager.get().show();
 
+        WindowManager.get().webContents.send('launcher-version-received', app.getVersion());
+
         /** User has either not set directory yet or has moved their client. */
         if (! ClientManager.hasClientDirectory() || ! ClientManager.isWarcraftDirectory(ClientManager.getClientDirectory())) {
             UpdateManager.setState(UpdateState.SETUP);
