@@ -28,6 +28,7 @@ interface PatchFile {
     Size: number;
     Custom: boolean;
     URL: string;
+    Origin: string;
 }
 
 interface Manifest {
@@ -202,7 +203,9 @@ export class Updater {
         this.remainingFiles = this.updatableFiles.length;
         this.cancelled = false;
 
-        log.info(`Commencing Download of ${this.updatableFiles.length} Files.`);
+        const useCDN = SettingsManager.storage().get('cdn');
+
+        log.info(`Commencing Download of ${this.updatableFiles.length} Files ${useCDN ? 'Using CDN' : 'Using Origin'}`);
 
         for (let index = 0; index < this.updatableFiles.length; index++) {
             const element = this.updatableFiles[index];
@@ -225,7 +228,7 @@ export class Updater {
                 fs.mkdirSync(directory, { recursive: true });
             }
             
-            await this.download(element.URL, directory, filename, index, this.updatableFiles.length);
+            await this.download(useCDN ? element.URL : element.Origin, directory, filename, index, this.updatableFiles.length);
         }
 
         this.checkIntegrity(this.manifest);

@@ -7,6 +7,7 @@ interface SettingStructure {
     clientDirectory: string;
     environment: string;
     key: string;
+    cdn: boolean;
 }
 
 /**
@@ -25,6 +26,10 @@ const schema: Schema<SettingStructure> = {
         type: 'string',
         default: '',
     },
+    cdn: {
+        type: 'boolean',
+        default: true,
+    },
 };
 
 /**
@@ -34,7 +39,12 @@ export class Settings {
     private store: Store<SettingStructure>;
 
     constructor() {
-        this.store = new Store<SettingStructure>({ 
+        this.store = new Store<SettingStructure>({
+            migrations: {
+                '1.0.13': store => {
+                    store.set('cdn', true);
+                },
+            },
             schema: schema,
         });
     }
