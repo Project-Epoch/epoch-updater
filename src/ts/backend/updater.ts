@@ -222,13 +222,13 @@ export class Updater {
 
             /** Figure out Directory. */
             const clientDir = ClientManager.getClientDirectory();
-            const downloadDir = element.Path.split(filename)[0];
-            const directory = path.join(clientDir, downloadDir);
+            const downloadDirs = parts.length > 1 ? parts.slice(0, -1) : [];
+            const directory = path.join(clientDir, ...downloadDirs);
 
             if (! fs.existsSync(directory)) {
                 fs.mkdirSync(directory, { recursive: true });
             }
-            
+
             await this.download(element.URL, directory, filename, index, this.updatableFiles.length);
         }
 
