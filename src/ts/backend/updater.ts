@@ -6,6 +6,8 @@ import { ClientManager } from "./client";
 import { DownloaderHelper } from "node-downloader-helper";
 import md5File from 'md5-file';
 import { SettingsManager } from "./settings";
+import isElevated from "is-elevated";
+let log = require("electron-log")
 
 /**
  * The various States of the Updater Process.
@@ -17,6 +19,7 @@ export enum UpdateState {
     VERIFYING_INTEGRITY = 'verifying-integrity',
     UPDATE_AVAILABLE = 'update-available',
     DOWNLOADING = 'downloading',
+    REQUIRES_ELEVATION = 'requires-elevation',
     DONE = 'done',
 }
 
@@ -116,7 +119,7 @@ export class Updater {
      * Fired when getting the Manifest Fails.
      */
     onManifestFailure(error: Error) {
-        console.log(error.message);
+        log.error(`Manifest Retrival Failure: ${error.message}`);
     }
 
     /**
@@ -126,6 +129,16 @@ export class Updater {
     async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
         this.updatableFiles = [];
+
+        /** Check UAC */
+        const elevated = await isElevated();
+        if (ClientManager.requiresElevation(ClientManager.getClientDirectory()) && ! elevated) {
+            this.setState(UpdateState.REQUIRES_ELEVATION);
+
+            return;
+        }
+
+        WindowManager.get().webContents.send('client-directory-loaded', ClientManager.getClientDirectory());
 
         for (let index = 0; index < manifest.Files.length; index++) {
             const element = manifest.Files[index];
@@ -193,6 +206,8 @@ export class Updater {
         this.remainingFiles = this.updatableFiles.length;
         this.cancelled = false;
 
+        log.info(`Commencing Download of ${this.updatableFiles.length} Files.`);
+
         for (let index = 0; index < this.updatableFiles.length; index++) {
             const element = this.updatableFiles[index];
 
@@ -251,6 +266,8 @@ export class Updater {
         });
 
         this.currentDownload.on('start', () => {
+            log.info(`Beginning Download: ${filename} - Remaining: ${this.remainingFiles}`);
+
             WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1, total);
             this.remainingFiles--;
         });
@@ -264,16 +281,18 @@ export class Updater {
         });
 
         this.currentDownload.on('error', (stats) => {
-            console.log('Download Failed');
+            log.error(`Download Failed - Message (${stats.message}) - Status (${stats.status}) - Body: (${stats.body})`);
             console.log(`Message: ${stats.message} - Status: ${stats.status} - Body: ${stats.body}`);
         });
 
-        this.currentDownload.on('end', () => {
+        this.currentDownload.on('end', (stats) => {
+            log.info(`Download Complete: ${stats.fileName} - Total Size (${stats.totalSize}) - Disk Size (${stats.onDiskSize}) - Success: ${stats.incomplete ? 'False' : 'True'}`);
+
             WindowManager.get().webContents.send('download-finished');
         });
 
         this.currentDownload.on('stop', () => {
-            console.log('Download Stopped');
+            log.info(`Download Stopped`);
         });
 
         await this.currentDownload.start();

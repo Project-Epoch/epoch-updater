@@ -117,6 +117,14 @@ export class Client {
     }
 
     /**
+     * Check to see if a Client Directory may require UAC prompt.
+     * @param path Path we're checking.
+     */
+    requiresElevation(path: string): boolean {
+        return path.includes('C:\\Program Files (x86)') || path.includes('C:\\Program Files');
+    }
+
+    /**
      * Checks to see if the Warcraft Directory provided is 
      * of the locale enUS.
      * @param path The directory we're checking.

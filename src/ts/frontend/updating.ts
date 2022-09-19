@@ -14,6 +14,12 @@ export class Updating {
     private chooseDirectoryButton: HTMLElement;
     private directoryErrorContainer: HTMLElement;
     private directoryErrorMessage: HTMLElement;
+    private elevationModal: HTMLElement;
+    private elevationButton: HTMLElement;
+
+    /** Directory Display */
+    private clientDirectoryCard: HTMLElement;
+    private clientDirectoryPath: HTMLElement;
 
     /** Progress Bar Elements. */
     private progressBarContainer: HTMLElement;
@@ -38,6 +44,10 @@ export class Updating {
         this.progressBarText = document.getElementById('progress-bar-text');
         this.progressBarEndText = document.getElementById('progress-bar-end-text');
         this.installModal = document.getElementById('installModal');
+        this.elevationModal = document.getElementById('elevationModal');
+        this.elevationButton = document.getElementById('elevation-understand');
+        this.clientDirectoryCard = document.getElementById('directory-card');
+        this.clientDirectoryPath = document.getElementById('directory-display-path');
 
         /** Register Callbacks. */
         window.updaterAPI.onStateChanged((state) => { this.onStateChanged(state); });
@@ -47,12 +57,14 @@ export class Updating {
         this.playButton.addEventListener('click', () => { this.onPlayButtonClicked(); });
         this.updateButton.addEventListener('click', () => { this.onUpdateButtonClicked(); });
         this.cancelButton.addEventListener('click', () => { this.onCancelButtonClicked(); });
+        this.elevationButton.addEventListener('click', () => { window.windowAPI.close(); });
 
         /** Download Events. */
         window.updaterAPI.onDownloadStart((filename, remaining, index, total) => { this.onDownloadStart(filename, remaining, index, total); });
         window.updaterAPI.onDownloadFinished(() => { this.onDownloadFinished() });
         window.updaterAPI.onDownloadProgress((total, name, downloaded, progress, speed) => { this.onDownloadProgress(total, name, downloaded, progress, speed); });
         window.updaterAPI.onVersionReceived((version) => { this.onVersionReceived(version); });
+        window.updaterAPI.onClientDirectoryLoaded((path) => { this.displayClientLocation(path); });
     
         /** Modal Events */
         document.getElementById('installModal').addEventListener('hidden.bs.modal', function (event) {
@@ -135,6 +147,10 @@ export class Updating {
             case 'done':
                 this.onDoneState();
                 break;
+
+            case 'requires-elevation':
+                this.onElevationRequiredState();
+                break;
         
             default:
                 console.log(`Frontend - Unexpected State: ${state}`);
@@ -205,6 +221,14 @@ export class Updating {
 
         /** Reset Bar. */
         this.setProgressBarPercentage(100, 100);
+    }
+
+    /**
+     * Fires when we have detected that UAC is required.
+     */
+    onElevationRequiredState() {
+        const uacModal = new Modal(this.elevationModal);
+        uacModal.show();
     }
 
     /**
@@ -293,6 +317,15 @@ export class Updating {
 
         this.progressBar.style.width = `${percent}%`;
         this.progressBar.ariaValueNow = `${percent}`;
+    }
+
+    /**
+     * Displays where the user is / has installed their game.
+     * @param path 
+     */
+    displayClientLocation(path: string) {
+        this.clientDirectoryPath.innerText = path;
+        show(this.clientDirectoryCard);
     }
 
     /**
