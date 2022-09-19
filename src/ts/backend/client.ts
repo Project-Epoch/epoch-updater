@@ -167,7 +167,7 @@ export class Client {
         fs.removeSync(path.join(this.getClientDirectory(), 'Cache'));
 
         const command = this.constructStartupCommand();
-        cp.exec(command);
+        cp.exec(command, (e) => { throw e });
     }
 }
 
