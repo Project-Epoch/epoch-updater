@@ -254,21 +254,23 @@ export class Updater {
     async download(url: string, directory: string, filename: string, index: number, total: number) {
         this.currentDownload = new DownloaderHelper(url, directory, {
             override: true,
-            removeOnStop: true,
-            removeOnFail: true,
+            removeOnStop: false,
+            removeOnFail: false,
             timeout: 60000,
+            resumeIfFileExists: false,
             progressThrottle: 1000,
             retry: {
                 maxRetries: 3,
-                delay: 5000,
+                delay: 10000,
             },
         });
+
+        this.remainingFiles--;
 
         this.currentDownload.on('start', () => {
             log.info(`Beginning Download: ${filename} - Remaining: ${this.remainingFiles}`);
 
             WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1, total);
-            this.remainingFiles--;
         });
 
         this.currentDownload.on('progress', (stats) => { 
