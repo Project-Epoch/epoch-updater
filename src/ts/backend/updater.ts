@@ -250,6 +250,7 @@ export class Updater {
      */
     async download(url: string, directory: string, filename: string, index: number, total: number) {
         this.currentDownload = new DownloaderHelper(url, directory, {
+            fileName: filename,
             override: true,
             removeOnStop: true,
             removeOnFail: true,
