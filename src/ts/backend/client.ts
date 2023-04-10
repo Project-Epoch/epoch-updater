@@ -1,5 +1,6 @@
 import { SettingsManager } from './settings';
 import fs from 'fs-extra';
+import path from 'path';
 import { WindowManager } from './window';
 import { dialog } from 'electron';
 import cp from "child_process";
@@ -8,6 +9,8 @@ import cp from "child_process";
  * A class to handle interacting with the Client.
  */
 export class Client {
+    private EXECUTABLE_NAME = 'Project-Epoch.exe';
+
     /**
      * Triggered by the Frontend. Allows us to choose a Directory 
      * where the Client will be installed.
@@ -18,7 +21,7 @@ export class Client {
             properties: ['openDirectory']
         });
 
-        let dir = result.filePaths[0];
+        const dir = result.filePaths[0];
 
         /** Pressed Cancel. */
         if (dir === undefined) {
@@ -79,26 +82,26 @@ export class Client {
      * Given a Directory it will check to see if it is a Warcraft 
      * Directory based on whether it has a Data subdir and 
      * specific MPQ.
-     * @param path The Directory we're checking.
+     * @param gameDirPath The Directory we're checking.
      */
-    isWarcraftDirectory(path: string): boolean {
+    isWarcraftDirectory(gameDirPath: string): boolean {
         /** Battlenet dll doesn't exist. */
-        if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Battle.net.dll'))) {
             return false;
         }
 
         /** Data Directory Doesnt Exists. */
-        if (! fs.existsSync(`${path}\\Data\\`)) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data'))) {
             return false;
         }
 
         /** Check First Patch. */
-        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'lichking.MPQ'))) {
             return false;
         }
 
         /** Check Second Patch. */
-        if (! fs.existsSync(`${path}\\Data\\patch-3.MPQ`)) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'patch-3.MPQ'))) {
             return false;
         }
 
@@ -126,31 +129,45 @@ export class Client {
      * of the locale enUS.
      * @param path The directory we're checking.
      */
-    isCorrectLocale(path: string): boolean {
+    isCorrectLocale(gameDirPath: string): boolean {
         /** enUS Locale Doesn't Exist. */
-        if (! fs.existsSync(`${path}\\Data\\enUS\\`)) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'enUS'))) {
             return false;
         }
 
         /** Double check with an MPQ. */
-        if (! fs.existsSync(`${path}\\Data\\enUS\\locale-enUS.MPQ`)) {
+        if (! fs.existsSync(path.join(gameDirPath, 'Data', 'enUS', 'locale-enUS.MPQ'))) {
             return false;
         }
 
         return true;
     }
 
+    constructStartupCommand(): string {
+        const executablePath = path.join(this.getClientDirectory(), this.EXECUTABLE_NAME);
+
+        switch (process.platform) {
+            case 'linux': {
+                // We use a separate WINEPREFIX to avoid any side-effects from the user defaults,
+                // but don't need to do any special setup (it should work out of the box).
+                const winePrefix = path.join(this.getClientDirectory(), '.wine');
+                return `WINEPREFIX="${winePrefix}" wine "${executablePath}"`;
+            }
+        
+            default:
+                return `${executablePath}`;
+        }
+    }
+
     /**
      * Attempts to open the WoW Client Exe.
      */
     open() {
-        let exe = 'Project-Epoch.exe';
-        let path = `${this.getClientDirectory()}\\${exe}`;
-
         /** Clean Cache. */
-        fs.removeSync(`${this.getClientDirectory()}\\Cache`);
+        fs.removeSync(path.join(this.getClientDirectory(), 'Cache'));
 
-        cp.exec(`"${path}"`);
+        const command = this.constructStartupCommand();
+        cp.exec(command, (e) => { throw e });
     }
 }
 
