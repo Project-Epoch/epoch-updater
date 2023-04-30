@@ -150,6 +150,10 @@ export class Updater {
                 continue;
             }
 
+            /** Fix readonly flag. */
+            const mode = fs.statSync(localPath).mode;
+            fs.chmodSync(localPath, mode | 0o666);
+
             /** Blizzard File - Just check number of bytes. */
             if (! element.Custom) {
                 let size = fs.statSync(localPath).size;
