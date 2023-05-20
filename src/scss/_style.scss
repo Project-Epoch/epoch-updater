@@ -36,12 +36,18 @@ a {
 }
 
 .window-control {
-    :hover { color: #FFF; }
+    :hover { 
+        color: #FFF;
+        cursor: pointer;
+    }
     padding-left: 5px;
 }
 
 .nav-button {
-    :hover { color: #ffc107; }
+    :hover { 
+        color: #ffc107;
+        cursor: pointer; 
+    }
 }
 
 .fixed-row-bottom {
@@ -53,4 +59,24 @@ a {
 .modal-background {
     background-color: rgba(0,0,0, 0.7);
     backdrop-filter: blur(3px); 
+}
+
+.slide-button {
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    margin: auto;
+    padding-left: 20px;
+    &:hover {
+        cursor: pointer; 
+        color: #ffc107;
+    }
+}
+
+#news-image:hover{
+    cursor: pointer;
+}
+
+#news-container > :hover {
+     cursor: pointer;
 }
