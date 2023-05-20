@@ -54,3 +54,12 @@ a {
     background-color: rgba(0,0,0, 0.7);
     backdrop-filter: blur(3px); 
 }
+
+.slide-button {
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+    margin: auto;
+    padding-left: 20px;
+    :hover { background-color: grey; color:rgba(0,0,0, 0.7)};
+}

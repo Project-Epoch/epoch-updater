@@ -32,11 +32,18 @@ export class Slides {
     private newsImage: HTMLElement;
     private newsTitle: HTMLElement;
     private newsDescription: HTMLElement;
+    private nextSlide: HTMLElement;
+    private previousSlide: HTMLElement;
 
     constructor() {
         this.newsImage = document.getElementById('news-image');
         this.newsTitle = document.getElementById('news-title');
         this.newsDescription = document.getElementById('news-description');
+        
+        this.nextSlide = document.getElementById('next-slide');
+        this.previousSlide = document.getElementById('previous-slide');
+        this.nextSlide.onclick = () => this.setNextSlide();
+        this.previousSlide.onclick = () => this.setPreviousSlide();
 
         this.setNextSlide();
 
@@ -49,9 +56,22 @@ export class Slides {
         /** Either loop back and grab the first slide or get the next one. */
         if (this.currentSlide === undefined || this.currentSlide === this.slides.length - 1) {
             this.currentSlide = 0;
-        }
-        else {
+        } else {
             this.currentSlide++;
+        }
+
+        /** Display it. */
+        this.newsImage.setAttribute('src', this.slides[this.currentSlide].path);
+        this.newsTitle.innerHTML = this.slides[this.currentSlide].title;
+        this.newsDescription.innerHTML = this.slides[this.currentSlide].description;
+    }
+
+    setPreviousSlide() {
+        /** Either loop back and grab the last slide or get the previous one. */
+        if (this.currentSlide === undefined || this.currentSlide === 0) {
+            this.currentSlide = this.slides.length - 1;
+        } else {
+            this.currentSlide--;
         }
 
         /** Display it. */
