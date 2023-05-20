@@ -61,5 +61,17 @@ a {
     color: white;
     margin: auto;
     padding-left: 20px;
-    :hover { background-color: grey; color:rgba(0,0,0, 0.7)};
+}
+
+.slide-button:hover {
+        cursor: pointer; 
+        color: rgba(229, 229, 229, 0.192);
+}
+
+#news-container {
+    :hover { cursor: pointer;}
+}
+
+#news-image:hover {
+   cursor: pointer;
 }
