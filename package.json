@@ -8,6 +8,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make:windows": "electron-forge make --platform=win32",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },
@@ -29,6 +30,7 @@
             "setupIcon": "./assets/epoch.ico",
             "title": "Project Epoch",
             "name": "ProjectEpochUpdater",
+            "productName": "Project Epoch Updater",
             "authors": "Project Epoch",
             "description": "The Game Client Updater for Project Epoch.",
             "exe": "Project Epoch Updater.exe",
@@ -45,11 +47,15 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "bin": "Project Epoch Updater"
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {
+            "bin": "Project Epoch Updater"
+          }
         }
       ],
       "plugins": [

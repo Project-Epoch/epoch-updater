@@ -1,6 +1,7 @@
 import { app, net } from "electron";
 import { WindowManager } from "./window";
 import fs from 'fs';
+import path from 'path';
 import { ClientManager } from "./client";
 import { DownloaderHelper } from "node-downloader-helper";
 import md5File from 'md5-file';
@@ -40,12 +41,12 @@ interface Manifest {
  */
 export class Updater {
     private currentState: UpdateState;
-    private manifestHost: string = 'updater.project-epoch.net';
+    private manifestHost = 'updater.project-epoch.net';
     private manifest: Manifest | undefined;
     private updatableFiles: Array<PatchFile> = [];
-    private remainingFiles: number = 0;
+    private remainingFiles = 0;
     private currentDownload: DownloaderHelper;
-    private cancelled: boolean = false;
+    private cancelled = false;
 
     constructor() {
         this.currentState = UpdateState.NONE;
@@ -96,8 +97,8 @@ export class Updater {
      * API endpoint.
      * @param response 
      */
-    processManifestResponse(response: any) {
-        if (response.hasOwnProperty('Version')) {
+    processManifestResponse(response: Manifest) {
+        if (response.Version) {
             this.onManifestReceived(response);
         } else {
             console.log('Unexpected Response');
@@ -140,8 +141,11 @@ export class Updater {
         WindowManager.get().webContents.send('client-directory-loaded', ClientManager.getClientDirectory());
 
         for (let index = 0; index < manifest.Files.length; index++) {
-            let element = manifest.Files[index];
-            let localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;
+            const element = manifest.Files[index];
+            // Cross-platform support requires us to use path.join, but there's no function in Node
+            // that can handle a mixture of Windows+Linux path separators, so we reconstruct the path locally.
+            const normalisedPath = path.join(...element.Path.split('\\'))
+            const localPath = path.join(ClientManager.getClientDirectory(), normalisedPath);
 
             /** Doesn't Exist. Just Download. */
             if (! fs.existsSync(localPath)) {
@@ -151,7 +155,7 @@ export class Updater {
 
             /** Blizzard File - Just check number of bytes. */
             if (! element.Custom) {
-                let size = fs.statSync(localPath).size;
+                const size = fs.statSync(localPath).size;
                 if (element.Size !== size) {
                     this.updatableFiles.push(element);
                 }
@@ -213,18 +217,18 @@ export class Updater {
             }
 
             /** Figure out filename. */
-            let parts = element.Path.split('\\');
-            let filename = parts[parts.length - 1];
+            const parts = element.Path.split('\\');
+            const filename = parts[parts.length - 1];
 
             /** Figure out Directory. */
-            let clientDir = ClientManager.getClientDirectory();
-            let downloadDir = element.Path.split(filename)[0];
-            let directory = `${clientDir}\\${downloadDir}`;
+            const clientDir = ClientManager.getClientDirectory();
+            const downloadDirs = parts.length > 1 ? parts.slice(0, -1) : [];
+            const directory = path.join(clientDir, ...downloadDirs);
 
             if (! fs.existsSync(directory)) {
                 fs.mkdirSync(directory, { recursive: true });
             }
-            
+
             await this.download(element.URL, directory, filename, index, this.updatableFiles.length);
         }
 
