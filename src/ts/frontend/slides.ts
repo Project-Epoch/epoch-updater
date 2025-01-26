@@ -14,17 +14,17 @@ export class Slides {
         {
             title: 'Adventure Awaits',
             description: 'Here at Project Epoch we are working tirelessly to provide you with a whole new experience. Bringing back the old school mystery and adventure we all sorely miss from Classic.<br><br>You will find hundreds of new quests, NPC\'s, rewarding reputations and much much more.<br><br>Explore every nook and cranny like the days of old.',
-            path: 'assets/news/zeppelins.jpg',
+            path: '../assets/news/zeppelins.jpg',
         },
         {
             title: 'Soul of Iron',
             description: 'Do you have a Soul of Iron? An indomitable spirit within you that refuses to kneel for your enemies?<br><br>Find the all seeing Chroniclers within every major faction capital and opt in to the challenge to prove your worth on the path to glory.',
-            path: 'assets/news/ironforge.jpg',
+            path: '../assets/news/ironforge.jpg',
         },
         {
             title: 'Looking For More',
             description: 'Awaiting you at level 60 is a wealth of difficult content to tackle. Onyxia the Broodmother and her two key allies await in her lair.<br><br>Form a group of 25 stalwart heroes to take her down alongside two new bosses and tough new mechanics to claim your epic rewards.',
-            path: 'assets/news/onyxia.jpg',
+            path: '../assets/news/onyxia.jpg',
         },
     ];
 

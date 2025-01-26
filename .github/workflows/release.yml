@@ -1,0 +1,29 @@
+on:
+    workflow_dispatch:
+
+name: Release Draft
+jobs:
+  build-on-linux:
+    name: Build and upload the Linux release assets
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build project and create a draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm ci
+          npm run publish --platform=linux --arch=x64
+  build-on-windows:
+    name: Build and upload the Windows release assets
+    runs-on: windows-2022
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build project and create a draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm ci
+          npm run publish --platform=win32 --arch=x64

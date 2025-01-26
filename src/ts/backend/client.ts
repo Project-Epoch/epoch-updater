@@ -156,12 +156,7 @@ export class Client {
 
         switch (process.platform) {
             case 'linux': {
-                /** Use a custom startup command if set */
-                const customStartupCommand = process.env.CUSTOM_STARTUP_COMMAND;
-                if (customStartupCommand) {
-                    return customStartupCommand;
-                }
-                /** Use the WINEPREFIX environment variable if set; otherwise default to local .wine in getClientDirectory. */
+                /** Use the WINEPREFIX environment variable if set; otherwise default to .wine in getClientDirectory. */
                 const winePrefix = process.env.WINEPREFIX || path.join(this.getClientDirectory(), '.wine');
                 return `WINEPREFIX="${winePrefix}" wine "${executablePath}"`;
             }
