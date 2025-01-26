@@ -1,6 +1,7 @@
 import { app, net } from "electron";
 import { WindowManager } from "./window";
 import fs from 'fs';
+import path from 'path';
 import { ClientManager } from "./client";
 import { DownloaderHelper } from "node-downloader-helper";
 import md5File from 'md5-file';
@@ -33,6 +34,19 @@ interface PatchFile {
 interface Manifest {
     Version: string;
     Files: Array<PatchFile>;
+}
+
+/**
+ * Helper function to convert Windows-style paths to cross-platform paths
+ */
+function convertPaths(manifest: Manifest): Manifest {
+    manifest.Files = manifest.Files.map((file) => {
+        if (file.Path.includes('\\')) {
+            file.Path = file.Path.split('\\').join(path.sep);
+        }
+        return file;
+    });
+    return manifest;
 }
 
 /**
@@ -110,7 +124,7 @@ export class Updater {
      * @param manifest The Patch Manifest we got.
      */
     onManifestReceived(manifest: Manifest) {
-        this.manifest = manifest;
+        this.manifest = convertPaths(manifest);
         this.checkIntegrity(manifest);
     }
 
@@ -141,7 +155,7 @@ export class Updater {
 
         for (let index = 0; index < manifest.Files.length; index++) {
             let element = manifest.Files[index];
-            let localPath = `${ClientManager.getClientDirectory()}\\${element.Path}`;
+            const localPath = path.join(ClientManager.getClientDirectory(), element.Path);
 
             /** Doesn't Exist. Just Download. */
             if (! fs.existsSync(localPath)) {
@@ -211,20 +225,13 @@ export class Updater {
             if (this.cancelled) {
                 continue;
             }
-
-            /** Figure out filename. */
-            let parts = element.Path.split('\\');
-            let filename = parts[parts.length - 1];
-
-            /** Figure out Directory. */
-            let clientDir = ClientManager.getClientDirectory();
-            let downloadDir = element.Path.split(filename)[0];
-            let directory = `${clientDir}\\${downloadDir}`;
+            /** Figure out filename and directory. */
+            let filename = path.basename(element.Path);
+            let directory = path.join(ClientManager.getClientDirectory(), path.dirname(element.Path));
 
             if (! fs.existsSync(directory)) {
                 fs.mkdirSync(directory, { recursive: true });
             }
-            
             await this.download(element.URL, directory, filename, index, this.updatableFiles.length);
         }
 

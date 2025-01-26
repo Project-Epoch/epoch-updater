@@ -1,5 +1,6 @@
 import { SettingsManager } from './settings';
 import fs from 'fs-extra';
+import path from 'path';
 import { WindowManager } from './window';
 import { dialog } from 'electron';
 import cp from "child_process";
@@ -18,7 +19,7 @@ export class Client {
             properties: ['openDirectory']
         });
 
-        let dir = result.filePaths[0];
+        const dir = result.filePaths[0];
 
         /** Pressed Cancel. */
         if (dir === undefined) {
@@ -79,26 +80,31 @@ export class Client {
      * Given a Directory it will check to see if it is a Warcraft 
      * Directory based on whether it has a Data subdir and 
      * specific MPQ.
-     * @param path The Directory we're checking.
+     * @param directoryPath The Directory we're checking.
      */
-    isWarcraftDirectory(path: string): boolean {
+    isWarcraftDirectory(directoryPath: string): boolean {
         /** Battlenet dll doesn't exist. */
-        if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
+        const battleNetDllPath = path.join(directoryPath, 'Battle.net.dll');
+        if (! fs.existsSync(battleNetDllPath)) {
             return false;
         }
 
         /** Data Directory Doesnt Exists. */
-        if (! fs.existsSync(`${path}\\Data\\`)) {
+        const dataDirectoryPath = path.join(directoryPath, 'Data');
+        if (! fs.existsSync(dataDirectoryPath)) {
+
             return false;
         }
 
         /** Check First Patch. */
-        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
+        const lichkingMpqPath = path.join(dataDirectoryPath, 'lichking.MPQ');
+        if (! fs.existsSync(lichkingMpqPath)) {
             return false;
         }
 
         /** Check Second Patch. */
-        if (! fs.existsSync(`${path}\\Data\\patch-3.MPQ`)) {
+        const patch3MpqPath = path.join(dataDirectoryPath, 'patch-3.MPQ');
+        if (! fs.existsSync(patch3MpqPath)) {
             return false;
         }
 
@@ -124,16 +130,18 @@ export class Client {
     /**
      * Checks to see if the Warcraft Directory provided is 
      * of the locale enUS.
-     * @param path The directory we're checking.
+     * @param clientDirectoryPath The directory we're checking.
      */
-    isCorrectLocale(path: string): boolean {
+    isCorrectLocale(clientDirectoryPath: string): boolean {
         /** enUS Locale Doesn't Exist. */
-        if (! fs.existsSync(`${path}\\Data\\enUS\\`)) {
+        const enUSLocalePath = path.join(clientDirectoryPath, 'Data', 'enUS');
+        if (! fs.existsSync(enUSLocalePath)) {
             return false;
         }
 
         /** Double check with an MPQ. */
-        if (! fs.existsSync(`${path}\\Data\\enUS\\locale-enUS.MPQ`)) {
+        const enUSLocaleMpqPath = path.join(enUSLocalePath, 'locale-enUS.MPQ');
+        if (!fs.existsSync(enUSLocaleMpqPath)) {
             return false;
         }
 
@@ -141,16 +149,42 @@ export class Client {
     }
 
     /**
+     * Constructs platform-specific WoW Client startup command
+     */
+    constructStartupCommand(): string {
+        const executablePath = path.join(this.getClientDirectory(), 'Project-Epoch.exe');
+
+        switch (process.platform) {
+            case 'linux': {
+                /** Use a custom startup command if set */
+                const customStartupCommand = process.env.CUSTOM_STARTUP_COMMAND;
+                if (customStartupCommand) {
+                    return customStartupCommand;
+                }
+                /** Use the WINEPREFIX environment variable if set; otherwise default to local .wine in getClientDirectory. */
+                const winePrefix = process.env.WINEPREFIX || path.join(this.getClientDirectory(), '.wine');
+                return `WINEPREFIX="${winePrefix}" wine "${executablePath}"`;
+            }
+
+            case 'win32':
+                return `"${executablePath}"`;
+
+            default:
+                throw new Error(`Unsupported platform: ${process.platform}`);
+        }
+    }
+
+    /**
      * Attempts to open the WoW Client Exe.
      */
     open() {
-        let exe = 'Project-Epoch.exe';
-        let path = `${this.getClientDirectory()}\\${exe}`;
-
         /** Clean Cache. */
-        fs.removeSync(`${this.getClientDirectory()}\\Cache`);
+        const cachePath = path.join(this.getClientDirectory(), 'Cache');
+        fs.removeSync(cachePath);
 
-        cp.exec(`"${path}"`);
+        /** Constructs platform-specific startup command. */
+        const command = this.constructStartupCommand();
+        cp.exec(command, (e) => { throw e });
     }
 }
 

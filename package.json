@@ -1,7 +1,7 @@
 {
   "name": "epoch-updater",
   "productName": "Project Epoch Updater",
-  "version": "1.0.12",
+  "version": "1.1.0",
   "description": "The Game Client Updater for Project Epoch.",
   "main": ".webpack/main",
   "scripts": {
@@ -16,7 +16,7 @@
     "name": "Project Epoch",
     "email": "support@project-epoch.net"
   },
-  "license": "MIT",
+  "license": "GPL-3.0",
   "config": {
     "forge": {
       "packagerConfig": {
@@ -45,11 +45,37 @@
         },
         {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "name": "project-epoch-updater",
+            "productName": "Project Epoch Updater",
+            "genericName": "Game Client Updater",
+            "description": "The Game Client Updater for Project Epoch.",
+            "section": "games",
+            "priority": "optional",
+            "maintainer": "Project Epoch",
+            "homepage": "https://www.project-epoch.net",
+            "bin": "Project Epoch Updater",
+            "icon": "./assets/epoch.ico",
+            "categories": [
+              "Game"
+            ]
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {
+            "name": "project-epoch-updater",
+            "productName": "Project Epoch Updater",
+            "genericName": "Game Client Updater",
+            "description": "The Game Client Updater for Project Epoch.",
+            "license": "GPL-3.0",
+            "homepage": "https://www.project-epoch.net",
+            "bin": "Project Epoch Updater",
+            "icon": "./assets/epoch.ico",
+            "categories": [
+              "Game"
+            ]
+          }
         }
       ],
       "plugins": [
