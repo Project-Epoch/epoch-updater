@@ -57,6 +57,7 @@ export class Client {
      */
     setClientDirectory(path: string): Client {
         SettingsManager.storage().set('clientDirectory', path);
+        WindowManager.get()?.webContents.send('client-directory-loaded', path);
         return this;
     }
     
@@ -65,14 +66,15 @@ export class Client {
      * @returns The Directory.
      */
     getClientDirectory(): string {
-        return SettingsManager.storage().get('clientDirectory');
+        return SettingsManager.storage().get('clientDirectory') as string;
     }
 
     /**
      * Checks to see if we have a Client Directory Set.
      */
     hasClientDirectory(): boolean {
-        return this.getClientDirectory() !== '';
+        const dir = this.getClientDirectory();
+        return typeof dir === 'string' && dir !== '';
     }
 
     /**
@@ -82,6 +84,7 @@ export class Client {
      * @param path The Directory we're checking.
      */
     isWarcraftDirectory(path: string): boolean {
+        if (!path || typeof path !== 'string') return false;
         /** Battlenet dll doesn't exist. */
         if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
             return false;
@@ -110,6 +113,7 @@ export class Client {
      * @param path Path we're checking.
      */
     isEmpty(path: string): boolean {
+         if (!path || typeof path !== 'string' || !fs.existsSync(path)) return true;
         return fs.readdirSync(path).length === 0;
     }
 
@@ -118,6 +122,7 @@ export class Client {
      * @param path Path we're checking.
      */
     requiresElevation(path: string): boolean {
+        if (!path || typeof path !== 'string') return false;
         return path.includes('C:\\Program Files (x86)') || path.includes('C:\\Program Files');
     }
 
@@ -127,6 +132,7 @@ export class Client {
      * @param path The directory we're checking.
      */
     isCorrectLocale(path: string): boolean {
+        if (!path || typeof path !== 'string') return false;
         /** enUS Locale Doesn't Exist. */
         if (! fs.existsSync(`${path}\\Data\\enUS\\`)) {
             return false;
@@ -145,12 +151,27 @@ export class Client {
      */
     open() {
         let exe = 'Project-Epoch.exe';
-        let path = `${this.getClientDirectory()}\\${exe}`;
+        const clientDir = this.getClientDirectory();
+        if (!clientDir) {
+            console.error("Client directory not set. Cannot open game.");
+            return;
+        }
+        let path = `${clientDir}\\${exe}`;
 
         /** Clean Cache. */
-        fs.removeSync(`${this.getClientDirectory()}\\Cache`);
+        try {
+            fs.removeSync(`${clientDir}\\Cache`);
+        } catch (err) {
+            console.error("Failed to remove Cache directory:", err);
+        }
 
-        cp.exec(`"${path}"`);
+
+        cp.exec(`"${path}"`, (error) => {
+            if (error) {
+                console.error(`Error opening game: ${error.message}`);
+                WindowManager.get()?.webContents.send('play-game-error', 'Failed to start the game. Please check your installation.');
+            }
+        });
     }
 }
 

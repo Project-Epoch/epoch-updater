@@ -74,6 +74,34 @@
             </div>
 
             <!-- Header / Nav -->
+            <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content rounded-3 modal-background">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="settingsModalLabel">Settings</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="currentInstallLocation" class="form-label text-white">Current Install Location:</label>
+                                <input type="text" class="form-control" id="currentInstallLocation" readonly>
+                            </div>
+                            <div class="mb-3">
+                                 <button type="button" class="btn btn-secondary" id="settings-choose-directory">Change Install Location</button>
+                            </div>
+                            <div class="alert alert-danger mt-3" role="alert" id="settings-error-message" hidden>
+                                An error occurred.
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="settings-save-button">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="row">
                 <!-- Window Controls -->
                 <div class="position-relative">
@@ -120,6 +148,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw">
                                 <i class="fa-brands fa-youtube"></i>
+                            </a>
+                        </li>
+
+                        <!-- Settings Link -->
+                        <li class="nav-item">
+                            <a class="nav-link text-light nav-button fs-2" id="settings-icon" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal">
+                                <i class="fa-solid fa-gear"></i>
                             </a>
                         </li>
                       </ul>

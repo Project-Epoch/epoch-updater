@@ -70,7 +70,24 @@ const updaterAPI: UpdaterAPI = {
     onClientDirectoryLoaded: (callback: Function) => ipcRenderer.on('client-directory-loaded', (event, path) => { callback(path); }),
 }
 
+/** Settings API */
+export type SettingsAPI = {
+    getCurrentDirectory: () => Promise<string>;
+    chooseNewDirectory: () => Promise<string | null>;
+    saveNewDirectory: (newPath: string) => Promise<boolean>;
+    onDirectoryChangeError: (callback: (message: string) => void) => void;
+};
+
+const settingsAPI: SettingsAPI = {
+    getCurrentDirectory: () => ipcRenderer.invoke('settings-get-current-directory'),
+    chooseNewDirectory: () => ipcRenderer.invoke('settings-choose-new-directory'),
+    saveNewDirectory: (newPath: string) => ipcRenderer.invoke('settings-save-new-directory', newPath),
+    onDirectoryChangeError: (callback: Function) => ipcRenderer.on('settings-directory-change-error', (event, message) => { callback(message); }),
+};
+
+
 /** Expose to the Electron Window. Make sure to add to src\window.d.ts */
 contextBridge.exposeInMainWorld('windowAPI', windowAPI);
 contextBridge.exposeInMainWorld('navigationAPI', navigationAPI);
 contextBridge.exposeInMainWorld('updaterAPI', updaterAPI);
+contextBridge.exposeInMainWorld('settingsAPI', settingsAPI);

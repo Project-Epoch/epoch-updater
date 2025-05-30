@@ -46,6 +46,7 @@ export class Updater {
     private remainingFiles: number = 0;
     private currentDownload: DownloaderHelper;
     private cancelled: boolean = false;
+    private clientDirectoryChanged: boolean = false;
 
     constructor() {
         this.currentState = UpdateState.NONE;
@@ -55,6 +56,7 @@ export class Updater {
             this.manifestHost = '127.0.0.1';
         }
     }
+    
 
     /**
      * Gets the Patch Manifest from our updater API.
@@ -90,6 +92,14 @@ export class Updater {
         request.setHeader('Content-Type', 'application/json');
         request.end();
     }
+
+    /**
+     * Notifies the updater that the client directory may have changed.
+     */
+    public notifyDirectoryChanged(): void {
+        this.clientDirectoryChanged = true;
+    }
+
 
     /**
      * Fires when we've got a response from the Manifest 
@@ -128,6 +138,7 @@ export class Updater {
     async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
         this.updatableFiles = [];
+        this.clientDirectoryChanged = false;
 
         /** Check UAC */
         const elevated = await isElevated();
@@ -191,6 +202,7 @@ export class Updater {
             }
         });
     }
+
 
     /**
      * Sets our state to Downloading and begins the 
@@ -307,9 +319,19 @@ export class Updater {
 
     /**
      * Forces a Frontend "Refresh" of the Update State by just sending it.
+     * Also, if the client directory changed through settings, re-trigger manifest/integrity check.
      */
     refresh() {
         WindowManager.get().webContents.send('update-state-changed', this.getState());
+        if (this.clientDirectoryChanged && (this.currentState === UpdateState.DONE || this.currentState === UpdateState.UPDATE_AVAILABLE || this.currentState === UpdateState.SETUP)) {
+             log.info('Client directory changed via settings, re-checking manifest and integrity.');
+            if (!ClientManager.hasClientDirectory() || !ClientManager.isWarcraftDirectory(ClientManager.getClientDirectory())) {
+                this.setState(UpdateState.SETUP);
+            } else {
+                this.setState(UpdateState.GET_MANIFEST);
+                this.getManifest();
+            }
+        }
     }
 
     /**
