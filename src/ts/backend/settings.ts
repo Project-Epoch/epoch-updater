@@ -8,6 +8,7 @@ interface SettingStructure {
     environment: string;
     key: string;
     cdn: boolean;
+    cdnProvider: string;
 }
 
 /**
@@ -30,6 +31,10 @@ const schema: Schema<SettingStructure> = {
         type: 'boolean',
         default: true,
     },
+    cdnProvider: {
+        type: 'string',
+        default: 'cloudflare',
+    }
 };
 
 /**
@@ -41,6 +46,9 @@ export class Settings {
     constructor() {
         this.store = new Store<SettingStructure>({
             migrations: {
+                '1.1.0': store => {
+                    store.set('cdnProvider', 'cloudflare');
+                },
                 '1.0.13': store => {
                     store.set('cdn', true);
                 },

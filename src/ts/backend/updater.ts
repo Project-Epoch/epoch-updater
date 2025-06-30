@@ -27,13 +27,14 @@ interface PatchFile {
     Hash: string;
     Size: number;
     Custom: boolean;
-    URL: string;
-    Origin: string;
+    Urls: Record<string, string>; // Map of provider name -> URL
 }
 
 interface Manifest {
     Version: string;
-    Files: Array<PatchFile>;
+    Uid: string;
+    Files: PatchFile[];
+    Removals?: string[]; // Optional, per environment
 }
 
 /**
@@ -62,13 +63,14 @@ export class Updater {
      */
     getManifest() {
         const environment = SettingsManager.storage().get('environment');
+        let environment = app.isPackaged ? SettingsManager.storage().get('environment') : 'development';
         const key = SettingsManager.storage().get('key');
 
         const request = net.request({
             method: 'GET',
             protocol: app.isPackaged ? 'https:' : 'http:',
             hostname: this.manifestHost,
-            path: `/api/manifest?environment=${environment}&internal_key=${key}`,
+            path: `/api/v2/manifest?environment=${environment}&internal_key=${key}`,
             redirect: 'error'
         });
 
@@ -207,9 +209,9 @@ export class Updater {
         this.remainingFiles = this.updatableFiles.length;
         this.cancelled = false;
 
-        const useCDN = SettingsManager.storage().get('cdn');
+        let cdnProvider = SettingsManager.storage().get('cdnProvider');
 
-        log.info(`Commencing Download of ${this.updatableFiles.length} Files ${useCDN ? 'Using CDN' : 'Using Origin'}`);
+        log.info(`Commencing Download of ${this.updatableFiles.length} Files Using CDN: ${cdnProvider}`);
 
         for (let index = 0; index < this.updatableFiles.length; index++) {
             const element = this.updatableFiles[index];
@@ -233,6 +235,7 @@ export class Updater {
             }
             
             await this.download(useCDN ? element.URL : element.Origin, directory, filename, index, this.updatableFiles.length);
+            await this.download(element.Urls[cdnProvider], directory, filename, index, this.updatableFiles.length);
         }
 
         this.checkIntegrity(this.manifest);
