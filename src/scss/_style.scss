@@ -1,56 +1,83 @@
 .app-background {
-    background-color: #2C2F33;
+  background-color: #2c2f33;
 }
 
 body {
-    -webkit-app-region: drag;
+  -webkit-app-region: drag;
 }
 
 button {
-    -webkit-app-region: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 a {
-    -webkit-app-region: no-drag;
+  -webkit-app-region: no-drag;
 }
 
 .titlebar {
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-app-region: drag;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
 }
 
 .news-card {
-    min-height: 320px;
-    border-radius: 0 !important;
+  min-height: 320px;
+  border-radius: 0 !important;
 }
 
 .directory-card {
-    padding-left: 0px;
-    border-radius: 0 !important;
+  padding-left: 0px;
+  border-radius: 0 !important;
 }
 
 .blur {
-    background-color: rgba(0,0,0, 0.4);
-    backdrop-filter: blur(3px);
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
 }
 
 .window-control {
-    :hover { color: #FFF; }
-    padding-left: 5px;
+  :hover {
+    color: #fff;
+  }
+  padding-left: 5px;
 }
 
 .nav-button {
-    :hover { color: #ffc107; }
+  :hover {
+    color: #ffc107;
+  }
 }
 
 .fixed-row-bottom {
-    position:fixed;
-    bottom:0;
-    width:100%;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
 .modal-background {
-    background-color: rgba(0,0,0, 0.7);
-    backdrop-filter: blur(3px); 
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(3px);
+}
+
+@font-face {
+  font-family: "Friz Quadrata";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Friz Quadrata"),
+    url("/assets/fonts/friz-quadrata-regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Friz Quadrata";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Friz Quadrata"),
+    url("/assets/fonts/friz-quadrata-bold-italic.woff") format("woff");
+}
+
+.friz {
+  font-family: "Friz Quadrata";
+  color: #f8b700;
+  text-shadow: 1.25px 1.25px 0 rgba(0, 0, 0, 0.3),
+    -1.25px -1.25px 0 rgba(0, 0, 0, 0.3), 1.25px -1.25px 0 rgba(0, 0, 0, 0.3),
+    -1.25px 1.25px rgba(0, 0, 0, 0.3);
 }

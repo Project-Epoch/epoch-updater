@@ -54,7 +54,7 @@ export class Updater {
 
         /** Dev Mode - Use Local. */
         if (! app.isPackaged) {
-            this.manifestHost = '127.0.0.1';
+            this.manifestHost = 'updater-api.test';
         }
     }
 
@@ -62,13 +62,15 @@ export class Updater {
      * Gets the Patch Manifest from our updater API.
      */
     getManifest() {
-        const environment = SettingsManager.storage().get('environment');
         let environment = app.isPackaged ? SettingsManager.storage().get('environment') : 'development';
+
+        environment = 'production';
+        
         const key = SettingsManager.storage().get('key');
 
         const request = net.request({
             method: 'GET',
-            protocol: app.isPackaged ? 'https:' : 'http:',
+            protocol: app.isPackaged ? 'https:' : 'https:',
             hostname: this.manifestHost,
             path: `/api/v2/manifest?environment=${environment}&internal_key=${key}`,
             redirect: 'error'
@@ -234,7 +236,6 @@ export class Updater {
                 fs.mkdirSync(directory, { recursive: true });
             }
             
-            await this.download(useCDN ? element.URL : element.Origin, directory, filename, index, this.updatableFiles.length);
             await this.download(element.Urls[cdnProvider], directory, filename, index, this.updatableFiles.length);
         }
 

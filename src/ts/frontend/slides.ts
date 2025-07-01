@@ -1,6 +1,4 @@
 interface NewsItem {
-    title: string;
-    description: string;
     path: string;
 }
 
@@ -12,19 +10,40 @@ export class Slides {
     private currentSlide: number | undefined;
     private slides: Array<NewsItem> = [
         {
-            title: 'Adventure Awaits',
-            description: 'Here at Project Epoch we are working tirelessly to provide you with a whole new experience. Bringing back the old school mystery and adventure we all sorely miss from Classic.<br><br>You will find hundreds of new quests, NPC\'s, rewarding reputations and much much more.<br><br>Explore every nook and cranny like the days of old.',
-            path: 'assets/news/zeppelins.jpg',
+            path: 'https://www.project-epoch.net/img/raids/onyxias-lair/1.jpg',
         },
         {
-            title: 'Soul of Iron',
-            description: 'Do you have a Soul of Iron? An indomitable spirit within you that refuses to kneel for your enemies?<br><br>Find the all seeing Chroniclers within every major faction capital and opt in to the challenge to prove your worth on the path to glory.',
-            path: 'assets/news/ironforge.jpg',
+            path: 'https://www.project-epoch.net/img/dungeons/baradin/6.jpg',
         },
         {
-            title: 'Looking For More',
-            description: 'Awaiting you at level 60 is a wealth of difficult content to tackle. Onyxia the Broodmother and her two key allies await in her lair.<br><br>Form a group of 25 stalwart heroes to take her down alongside two new bosses and tough new mechanics to claim your epic rewards.',
-            path: 'assets/news/onyxia.jpg',
+            path: 'https://www.project-epoch.net/img/raids/molten-core/1.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/dungeons/deadmines/4.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/dungeons/glitter/1.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/dungeons/wailing/4.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/dungeons/glitter/1.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/locations/ashfallpost/1.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/locations/tolbaradisland/4.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/locations/valormok/1.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/locations/telesaran/4.jpg',
+        },
+        {
+            path: 'https://www.project-epoch.net/img/locations/silithus/4.jpg',
         },
     ];
 
@@ -35,8 +54,6 @@ export class Slides {
 
     constructor() {
         this.newsImage = document.getElementById('news-image');
-        this.newsTitle = document.getElementById('news-title');
-        this.newsDescription = document.getElementById('news-description');
 
         this.setNextSlide();
 
@@ -56,7 +73,5 @@ export class Slides {
 
         /** Display it. */
         this.newsImage.setAttribute('src', this.slides[this.currentSlide].path);
-        this.newsTitle.innerHTML = this.slides[this.currentSlide].title;
-        this.newsDescription.innerHTML = this.slides[this.currentSlide].description;
     }
 }
