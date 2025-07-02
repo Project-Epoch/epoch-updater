@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Project Epoch Updater</title>
+        <title>Project Epoch</title>
 
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -20,12 +20,12 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <p class="text-warning">
-                                        If you have an existing 3.3.5a enUS client feel free to select it as your install location to expedite the install process and lower the download size to approximately <strong>1gb</strong>. However, if you do not have an existing client select an empty directory and a full install will begin which requires approximately <strong>17.4gb</strong> of storage.
+                                    <p class="text-light">
+                                        Please select an existing 3.3.5a enUS client as your install location to begin the install process.
                                     </p>
                                     <br>
-                                    <p class="text-warning">
-                                        Warning: Choosing your "Program Files" directory under the C: Drive will require running with Admin privileges for all updates. We have left this as a personal choice.
+                                    <p class="text-light">
+                                        Warning: Choosing a directory under your "Program Files" directory under the C: Drive will require running with Admin privileges for all updates. We have left this as a personal choice.
                                     </p>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-12">
-                                    <p class="text-warning">
+                                    <p class="text-light">
                                         Due to Windows User Access Control installing to "C:\\Program Files (x86)" or "C:\\Program Files" requires running the updater with Administrator rights.
                                         <br>
                                         <br>
@@ -74,11 +74,58 @@
             </div>
 
             <!-- Header / Nav -->
+            <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content rounded-3 modal-background">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="settingsModalLabel">Settings</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <label for="cdnProviderSelect" class="form-label text-white">CDN Provider</label>
+                                    <select class="form-select" id="cdnProviderSelect" aria-label="CDN Provider">
+                                        <option value="cloudflare">Server #1 (Cloudflare)</option>
+                                        <option value="digitalocean">Server #2 (DigitalOcean)</option>
+                                        <option value="none">Server #3 (Slower)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label for="environmentSelect" class="form-label text-white">Environment</label>
+                                    <select class="form-select" id="environmentSelect" aria-label="Environment">
+                                        <option value="production">Production</option>
+                                        <option value="internal">Internal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <label for="keyInput" class="form-label text-white">Key</label>
+                                    <input type="text" class="form-control" id="keyInput">
+                                </div>
+                            </div>
+                            <p class="text-light mt-3">Saving changes requires exiting and restarting the application.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary rounded-3" id="save-settings-button">Save and Restart</button>
+                            <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <!-- Window Controls -->
                 <div class="position-relative">
                     <div class="position-absolute top-0 end-0">
                         <ul class="nav">
+                            <!-- Version Display -->
+                            <li class="nav-item">
+                                <a class="nav-link text-muted window-control" id="launcher-version">
+                                </a>
+                            </li>
+
                             <!-- Minimize -->
                             <li class="nav-item">
                                 <a class="nav-link text-muted window-control" id="window-minimize">
@@ -104,22 +151,27 @@
                     <ul class="nav mt-5 mx-5 float-end">
                         <!-- Blog Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://www.project-epoch.net/">
+                            <a class="nav-link text-muted nav-button fs-2 link-open-external" href="https://www.project-epoch.net/">
                                 <i class="fa-solid fa-globe"></i>
                             </a>
                         </li>
 
                         <!-- Discord -->
                         <li class="nav-item">
-                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://discord.gg/dKNUv3Wag8">
+                            <a class="nav-link text-muted nav-button fs-2 link-open-external" href="https://www.project-epoch.net/community/discord">
                                 <i class="fa-brands fa-discord"></i>
                             </a>
                         </li>
 
                         <!-- YouTube Link -->
                         <li class="nav-item">
-                            <a class="nav-link text-light nav-button fs-2 link-open-external" href="https://www.youtube.com/channel/UCKq0WV-ykwwrWcc-MdU_xhw">
+                            <a class="nav-link text-muted nav-button fs-2 link-open-external" href="https://www.project-epoch.net/trailers/">
                                 <i class="fa-brands fa-youtube"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-muted nav-button fs-2" id="settings-button" data-bs-toggle="modal" data-bs-target="#settingsModal" title="Settings">
+                                <i class="fa-solid fa-gear"></i>
                             </a>
                         </li>
                       </ul>
@@ -132,13 +184,18 @@
                     <div class="card news-card border-dark blur">
                         <div class="row g-0">
                             <div class="col-md-8">
-                                <img src="assets/news/zeppelins.jpg" class="img-fluid rounded-0" id="news-image">
+                                <img src="https://www.project-epoch.net/img/raids/onyxias-lair/1.jpg" class="img-fluid rounded-0" id="news-image">
                             </div>
-                            <div class="col-md-4">
-                                <div class="card-body">
-                                    <h3 class="card-title text-white mb-4 lead" id="news-title">...</h3>
-                                    <p class="card-text text-warning font-weight-light" id="news-description">
-                                        ...
+                            <div class="col-md-4 d-flex align-items-center justify-content-center">
+                                <div class="card-body ">
+                                    <h2 class="card-title text-warning mb-3 lead fs-2 friz text-center" id="news-title">
+                                        Timeways Diverge
+                                    </h2>
+                                    <p class="card-text text-light fw-normal">
+                                        Project Epoch is Classic WoW, reborn and rebuilt with a twist. New dungeons, custom class changes, brand new areas, overhauled PvP and a wealth of engaging story.
+                                    </p>
+                                    <p class="card-text text-light fw-normal">
+                                        It's everything you think you remember, plus everything you never saw coming.
                                     </p>
                                 </div>
                             </div>

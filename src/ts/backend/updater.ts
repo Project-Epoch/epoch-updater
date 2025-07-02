@@ -27,12 +27,14 @@ interface PatchFile {
     Hash: string;
     Size: number;
     Custom: boolean;
-    URL: string;
+    Urls: Record<string, string>; // Map of provider name -> URL
 }
 
 interface Manifest {
     Version: string;
-    Files: Array<PatchFile>;
+    Uid: string;
+    Files: PatchFile[];
+    Removals?: string[]; // Optional, per environment
 }
 
 /**
@@ -52,7 +54,7 @@ export class Updater {
 
         /** Dev Mode - Use Local. */
         if (! app.isPackaged) {
-            this.manifestHost = '127.0.0.1';
+            this.manifestHost = 'updater-api.test';
         }
     }
 
@@ -60,14 +62,17 @@ export class Updater {
      * Gets the Patch Manifest from our updater API.
      */
     getManifest() {
-        const environment = SettingsManager.storage().get('environment');
+        let environment = app.isPackaged ? SettingsManager.storage().get('environment') : 'development';
+
+        environment = 'production';
+        
         const key = SettingsManager.storage().get('key');
 
         const request = net.request({
             method: 'GET',
-            protocol: app.isPackaged ? 'https:' : 'http:',
+            protocol: app.isPackaged ? 'https:' : 'https:',
             hostname: this.manifestHost,
-            path: `/api/manifest?environment=${environment}&internal_key=${key}`,
+            path: `/api/v2/manifest?environment=${environment}&internal_key=${key}`,
             redirect: 'error'
         });
 
@@ -149,6 +154,10 @@ export class Updater {
                 continue;
             }
 
+            /** Fix readonly flag. */
+            const mode = fs.statSync(localPath).mode;
+            fs.chmodSync(localPath, mode | 0o666);
+
             /** Blizzard File - Just check number of bytes. */
             if (! element.Custom) {
                 let size = fs.statSync(localPath).size;
@@ -202,7 +211,9 @@ export class Updater {
         this.remainingFiles = this.updatableFiles.length;
         this.cancelled = false;
 
-        log.info(`Commencing Download of ${this.updatableFiles.length} Files.`);
+        let cdnProvider = SettingsManager.storage().get('cdnProvider');
+
+        log.info(`Commencing Download of ${this.updatableFiles.length} Files Using CDN: ${cdnProvider}`);
 
         for (let index = 0; index < this.updatableFiles.length; index++) {
             const element = this.updatableFiles[index];
@@ -225,7 +236,7 @@ export class Updater {
                 fs.mkdirSync(directory, { recursive: true });
             }
             
-            await this.download(element.URL, directory, filename, index, this.updatableFiles.length);
+            await this.download(element.Urls[cdnProvider], directory, filename, index, this.updatableFiles.length);
         }
 
         this.checkIntegrity(this.manifest);
@@ -252,21 +263,23 @@ export class Updater {
         this.currentDownload = new DownloaderHelper(url, directory, {
             fileName: filename,
             override: true,
-            removeOnStop: true,
-            removeOnFail: true,
+            removeOnStop: false,
+            removeOnFail: false,
             timeout: 60000,
+            resumeIfFileExists: false,
             progressThrottle: 1000,
             retry: {
                 maxRetries: 3,
-                delay: 5000,
+                delay: 10000,
             },
         });
+
+        this.remainingFiles--;
 
         this.currentDownload.on('start', () => {
             log.info(`Beginning Download: ${filename} - Remaining: ${this.remainingFiles}`);
 
             WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1, total);
-            this.remainingFiles--;
         });
 
         this.currentDownload.on('progress', (stats) => { 

@@ -27,14 +27,12 @@ export class Client {
         }
 
         if (this.isEmpty(dir)) {
-            WindowManager.get().webContents.send('valid-install-directory-chosen', dir);
-            this.setClientDirectory(dir);
-            cb();
+            WindowManager.get().webContents.send('invalid-install-directory-chosen', 'Chosen Directory is empty and could not be a World of Warcraft directory. Due to bandwidth constraints we require you to provide your own 3.3.5a enUS client.');
             return;
         }
 
         if (! this.isWarcraftDirectory(dir)) {
-            WindowManager.get().webContents.send('invalid-install-directory-chosen', 'Chosen Directory is not empty and is not a World of Warcraft directory.');
+            WindowManager.get().webContents.send('invalid-install-directory-chosen', 'Chosen Directory is not a World of Warcraft directory.');
             return;
         }
 
@@ -82,27 +80,28 @@ export class Client {
      * @param path The Directory we're checking.
      */
     isWarcraftDirectory(path: string): boolean {
-        /** Battlenet dll doesn't exist. */
-        if (! fs.existsSync(`${path}\\Battle.net.dll`)) {
-            return false;
-        }
+        const checks: Array<string> = [
+            'Data\\',
+            'Data\\common.MPQ',
+            'Data\\common-2.MPQ',
+            'Data\\expansion.MPQ',
+            'Data\\lichking.MPQ',
+            'Data\\patch.MPQ',
+            'Data\\patch-2.MPQ',
+            'Data\\patch-3.MPQ',
+        ];
 
-        /** Data Directory Doesnt Exists. */
-        if (! fs.existsSync(`${path}\\Data\\`)) {
-            return false;
-        }
+        let valid: boolean = true;
 
-        /** Check First Patch. */
-        if (! fs.existsSync(`${path}\\Data\\lichking.MPQ`)) {
-            return false;
-        }
+        checks.forEach((check) => {
+            if (! valid)
+                return;
 
-        /** Check Second Patch. */
-        if (! fs.existsSync(`${path}\\Data\\patch-3.MPQ`)) {
-            return false;
-        }
+            if (! fs.existsSync(`${path}\\${check}`))
+                valid = false;
+        });
 
-        return true;
+        return valid;
     }
 
     /**
