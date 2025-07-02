@@ -132,6 +132,10 @@ export class Updating {
                 this.onGetManifestState();
                 break;
 
+            case 'invalid-key':
+                this.onInvalidKey();
+                break;
+
             case 'verifying-integrity':
                 this.onVerifyingIntegrityState();
                 break;
@@ -195,6 +199,23 @@ export class Updating {
         /** Hide / Display Buttons. */
         this.hideAllButtons();
         show(this.initButton);
+
+        /** Progress Bar */
+        show(this.progressBarContainer);
+        this.progressBar.classList.add('progress-bar-striped');
+        this.progressBar.classList.add('progress-bar-animated');
+        this.setProgressBarPercentage(100, 100);
+    }
+
+    /**
+     * Fired when connecting to internal realm with invalid key
+     */
+    onInvalidKey() {
+        /** Hide / Display Buttons. */
+        this.hideAllButtons();
+        show(this.initButton);
+
+        this.progressBarText.innerText = "Invalid Internal Key Provided!";
 
         /** Progress Bar */
         show(this.progressBarContainer);

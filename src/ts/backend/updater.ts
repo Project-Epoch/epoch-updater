@@ -19,6 +19,7 @@ export enum UpdateState {
     UPDATE_AVAILABLE = 'update-available',
     DOWNLOADING = 'downloading',
     REQUIRES_ELEVATION = 'requires-elevation',
+    INVALID_KEY = 'invalid-key',
     DONE = 'done',
 }
 
@@ -62,15 +63,12 @@ export class Updater {
      * Gets the Patch Manifest from our updater API.
      */
     getManifest() {
-        let environment = app.isPackaged ? SettingsManager.storage().get('environment') : 'development';
-
-        environment = 'production';
-        
+        const environment = SettingsManager.storage().get('environment');
         const key = SettingsManager.storage().get('key');
 
         const request = net.request({
             method: 'GET',
-            protocol: app.isPackaged ? 'https:' : 'https:',
+            protocol: 'https:',
             hostname: this.manifestHost,
             path: `/api/v2/manifest?environment=${environment}&internal_key=${key}`,
             redirect: 'error'
@@ -106,7 +104,10 @@ export class Updater {
             this.onManifestReceived(response);
         } else {
             console.log('Unexpected Response');
-            console.log(response);
+
+            if (response?.errors?.internal_key) {
+                this.setState(UpdateState.INVALID_KEY);
+            }
         }
     }
 
@@ -212,6 +213,10 @@ export class Updater {
         this.cancelled = false;
 
         let cdnProvider = SettingsManager.storage().get('cdnProvider');
+        let environment = SettingsManager.storage().get('environment');
+
+        if (environment === 'internal' && cdnProvider !== 'digitalocean')
+            cdnProvider = 'digitalocean';
 
         log.info(`Commencing Download of ${this.updatableFiles.length} Files Using CDN: ${cdnProvider}`);
 
