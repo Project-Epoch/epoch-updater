@@ -139,6 +139,7 @@ export class Updater {
      */
     async checkIntegrity(manifest: Manifest) {
         this.setState(UpdateState.VERIFYING_INTEGRITY);
+        this.remainingFiles = 0;
         this.updatableFiles = [];
 
         /** Check UAC */
@@ -178,6 +179,8 @@ export class Updater {
             /** Custom File. Actually Hash Check. */
             await this.checkHash(element, localPath);
         }
+
+        this.updatableFiles = Array.from(new Map(this.updatableFiles.map(f => [f.Hash, f])).values());
 
         /** Need to download every file. Must be new. */
         if (this.updatableFiles.length === manifest.Files.length) {
@@ -259,6 +262,8 @@ export class Updater {
     async cancel() {
         this.cancelled = true;
         await this.currentDownload.stop();
+        this.remainingFiles = 0;
+        this.updatableFiles = [];
         this.checkIntegrity(this.manifest);
     }
 
@@ -277,7 +282,7 @@ export class Updater {
             removeOnStop: false,
             removeOnFail: false,
             timeout: 60000,
-            resumeIfFileExists: false,
+            resumeIfFileExists: true,
             progressThrottle: 1000,
             retry: {
                 maxRetries: 3,
@@ -289,6 +294,12 @@ export class Updater {
 
         this.currentDownload.on('start', () => {
             log.info(`Beginning Download: ${filename} - Remaining: ${this.remainingFiles}`);
+
+            WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1, total);
+        });
+
+        this.currentDownload.on('resume', () => {
+            log.info(`Resuming Download: ${filename} - Remaining: ${this.remainingFiles}`);
 
             WindowManager.get().webContents.send('download-started', filename, this.remainingFiles, index + 1, total);
         });
