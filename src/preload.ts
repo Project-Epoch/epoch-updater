@@ -49,6 +49,17 @@ export type UpdaterAPI = {
     onClientDirectoryLoaded: (callback: (path: string) => void) => void;
 }
 
+export type SettingsAPI = {
+    getSettings: () => void;
+    onSettingsReceived: (callback: (settings: { clientDirectory: string, environment: string, key: string, cdn: boolean, cdnProvider: string }) => void) => void;
+    saveSettings: (settings: { environment: string, key: string, cdnProvider: string }) => void;
+}
+
+const settingsAPI: SettingsAPI = {
+    getSettings: () => { ipcRenderer.send('get-settings'); },
+    onSettingsReceived: (callback: Function) => ipcRenderer.on('settings-received', (event, settings) => { callback(settings); }),
+    saveSettings: (settings) => { ipcRenderer.send('save-settings', settings); },
+}
 const updaterAPI: UpdaterAPI = {
     refreshState: () => { ipcRenderer.send('refresh-update-state'); },
     onStateChanged: (callback: Function) => ipcRenderer.on('update-state-changed', (event, state) => { callback(state); }),
@@ -76,3 +87,4 @@ const updaterAPI: UpdaterAPI = {
 contextBridge.exposeInMainWorld('windowAPI', windowAPI);
 contextBridge.exposeInMainWorld('navigationAPI', navigationAPI);
 contextBridge.exposeInMainWorld('updaterAPI', updaterAPI);
+contextBridge.exposeInMainWorld('settingsAPI', settingsAPI);
