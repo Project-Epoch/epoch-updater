@@ -66,11 +66,17 @@ export class Updater {
         const environment = SettingsManager.storage().get('environment');
         const key = SettingsManager.storage().get('key');
 
+        let uri = `/api/v2/manifest?environment=${environment}`;
+
+        if (key !== '') {
+            uri += `&internal_key=${key}`;
+        }
+
         const request = net.request({
             method: 'GET',
             protocol: 'https:',
             hostname: this.manifestHost,
-            path: `/api/v2/manifest?environment=${environment}&internal_key=${key}`,
+            path: uri,
             redirect: 'error'
         });
 
