@@ -54,6 +54,10 @@ a {
   width: 100%;
 }
 
+.modal {
+  -webkit-app-region: no-drag;
+}
+
 .modal-background {
   background-color: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(3px);
