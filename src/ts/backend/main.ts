@@ -40,6 +40,7 @@ class Main {
         });
         ipcMain.on('refresh-update-state', () => { UpdateManager.refresh(); });
         ipcMain.on('update-button-click', () => { UpdateManager.downloadUpdates(); });
+        ipcMain.on('remove-external-patches', () => { UpdateManager.removeExternalPatches(); });
         ipcMain.on('on-cancel-button-clicked', () => { UpdateManager.cancel(); });
         ipcMain.on('play-game', () => { 
             ClientManager.open();

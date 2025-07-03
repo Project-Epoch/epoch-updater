@@ -1,3 +1,5 @@
+import { show } from "./helpers";
+
 /**
  * A centralised place to handle the Frontend aspect of Window Management.
  */
@@ -24,6 +26,17 @@ export class Window {
             const display = document.getElementById('launcher-version');
 
             display.innerText = `v${version}`;
+        });
+
+        window.windowAPI.onExternalPatches((patches) => {
+            console.log('External Patches Detected:', patches);
+
+            const display = document.getElementById('patches-list');
+            const button = document.getElementById('patch-warning-click');
+
+            show(button);
+
+            display.innerHTML = patches.map(patch => `- ${patch}<br>`).join('');
         });
     }
 }

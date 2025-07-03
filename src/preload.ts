@@ -6,6 +6,7 @@ export type WindowManagementAPI = {
     close: () => void;
     minimize: () => void;
     onVersionReceived: (callback: (version: string) => void) => void;
+    onExternalPatches: (callback: (patches: string[]) => void) => void;
 }
 
 /** Implement those functions, basically just pass to IPC. */
@@ -14,6 +15,7 @@ const windowAPI: WindowManagementAPI = {
     close: () => { ipcRenderer.send('window-close'); },
     minimize: () => { ipcRenderer.send('window-minimize'); },
     onVersionReceived: (callback: Function) => ipcRenderer.on('launcher-version-received', (event, version) => { callback(version); }),
+    onExternalPatches: (callback: Function) => ipcRenderer.on('external-patches-detected', (event, patches) => { callback(patches); }),
 }
 
 /** Used to open Navigation Links in Browser. */
@@ -46,6 +48,9 @@ export type UpdaterAPI = {
 
     onVersionReceived: (callback: (version: string) => void) => void;
 
+    onExternalPatches: (callback: (patches: string[]) => void) => void;
+    onRemovePatches: () => void;
+
     onClientDirectoryLoaded: (callback: (path: string) => void) => void;
 }
 
@@ -75,10 +80,13 @@ const updaterAPI: UpdaterAPI = {
     onVerifyProgress: (callback: Function) => ipcRenderer.on('verify-progress', (event, total, progress, filename) => { callback(total, progress, filename); }),
 
     onPlayButtonClicked: () => { ipcRenderer.send('play-game'); },
+    onRemovePatches: () => { ipcRenderer.send('remove-external-patches'); },
     onUpdateButtonClicked: () => { ipcRenderer.send('update-button-click'); },
     onCancelButtonClicked: () => { ipcRenderer.send('on-cancel-button-clicked'); },
 
     onVersionReceived: (callback: Function) => ipcRenderer.on('version-received', (event, version) => { callback(version); }),
+
+    onExternalPatches: (callback: Function) => ipcRenderer.on('external-patches-detected', (event, patches) => { callback(patches); }),
 
     onClientDirectoryLoaded: (callback: Function) => ipcRenderer.on('client-directory-loaded', (event, path) => { callback(path); }),
 }

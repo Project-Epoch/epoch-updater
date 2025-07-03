@@ -7,6 +7,7 @@ import md5File from 'md5-file';
 import { SettingsManager } from "./settings";
 import isElevated from "is-elevated";
 let log = require("electron-log")
+import * as path from 'path';
 
 /**
  * The various States of the Updater Process.
@@ -49,14 +50,15 @@ export class Updater {
     private remainingFiles: number = 0;
     private currentDownload: DownloaderHelper;
     private cancelled: boolean = false;
+    private externalPatches: string[] = [];
 
     constructor() {
         this.currentState = UpdateState.NONE;
 
         /** Dev Mode - Use Local. */
-        if (! app.isPackaged) {
-            this.manifestHost = 'updater-api.test';
-        }
+        // if (! app.isPackaged) {
+        //     this.manifestHost = 'updater-api.test';
+        // }
     }
 
     /**
@@ -192,9 +194,39 @@ export class Updater {
             /** Only some files. Must be an update. */
             this.setState(UpdateState.UPDATE_AVAILABLE);
             WindowManager.get().webContents.send('version-received', this.manifest.Version);
-        } else {
-            this.setState(UpdateState.DONE);
+
+            return;
         }
+
+        /** Detect Old / 3rd Party Patches. */
+        const dataDir = `${ClientManager.getClientDirectory()}\\Data`;
+
+        const blizzardPatches: string[] = [
+            'common.mpq',
+            'common-2.mpq',
+            'expansion.mpq',
+            'lichking.mpq',
+            'patch.mpq',
+            'patch-2.mpq',
+            'patch-3.mpq',
+        ];
+
+        this.externalPatches = [];
+        
+        this.externalPatches = fs.readdirSync(dataDir)
+            .filter(file => {
+                const fullPath = path.join(dataDir, file);
+                return fs.statSync(fullPath).isFile() && path.extname(file).toLowerCase() === '.mpq';
+            })
+            .filter(file => ! blizzardPatches.includes(file.toLowerCase()))
+            .filter(file => {
+                return ! manifest.Files.some(f => f.Path === `Data\\${file}` && f.Custom);
+            });
+
+        if (this.externalPatches.length > 0)
+            WindowManager.get().webContents.send('external-patches-detected', this.externalPatches);
+
+        this.setState(UpdateState.DONE);
     }
 
     /**
@@ -265,6 +297,25 @@ export class Updater {
         this.remainingFiles = 0;
         this.updatableFiles = [];
         this.checkIntegrity(this.manifest);
+    }
+
+    async removeExternalPatches() {
+        const dataDir = `${ClientManager.getClientDirectory()}\\Data`;
+        for (const patch of this.externalPatches) {
+            const patchPath = path.join(dataDir, patch);
+    
+            try {
+                console.log(`Removing External Patch: ${patchPath}`);
+                await fs.promises.unlink(patchPath);
+            } catch (err) {
+                console.warn(`Failed to delete ${patchPath}:`, err);
+            }
+        }
+        
+        this.remainingFiles = 0;
+        this.updatableFiles = [];
+        this.setState(UpdateState.GET_MANIFEST);
+        this.getManifest();
     }
 
     /**

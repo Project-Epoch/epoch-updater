@@ -10,6 +10,34 @@
 
     <body class="app-background" style="background: url('assets/background.jpg');">
         <div class="container-fluid">
+            <!-- Modals - Unrecognized Patches -->
+            <div class="modal fade" id="patchesModal" tabindex="-1" aria-labelledby="patchesModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content rounded-3 modal-background">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-white" id="patchesModalLabel">Unrecognized Patches Detected</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12" >
+                                    <p class="text-light">
+                                        We have detected the following unrecognized patches in your client directory. These patches may cause issues with the updater and the game client.
+                                    </p>
+                                    <br>
+                                    <p class="text-light" id="patches-list">
+                                        
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary rounded-3" id="patches-remove">Remove Detected Patches</button>
+                            <button type="button" class="btn btn-danger rounded-3" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Modals - Install -->
             <div class="modal fade" id="installModal" tabindex="-1" aria-labelledby="installModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -210,6 +238,10 @@
                         <div class="card-body mt-0 mb-0 py-1">
                             <i class="fa-regular fa-folder-open text-warning"></i>
                             <span class="text-warning">Game Directory - </span> <span class="text-white" id="directory-display-path"></span>
+
+                            <button type="button" id="patch-warning-click" class="btn btn-outline-danger btn-sm float-end rounded-3" style="padding: 0.12rem 0.5rem;" data-bs-toggle="modal" data-bs-target="#patchesModal" hidden>
+                                Warning: Unrecognized Patches Detected!
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -20,6 +20,10 @@ export class Updating {
     /** Directory Display */
     private clientDirectoryCard: HTMLElement;
     private clientDirectoryPath: HTMLElement;
+    private externalPatchWarningClick: HTMLElement;
+    private externalPatchModal: HTMLElement;
+    private externalPatchInner: HTMLElement;
+    private externalPatchRemoveButton: HTMLElement;
 
     /** Progress Bar Elements. */
     private progressBarContainer: HTMLElement;
@@ -48,6 +52,10 @@ export class Updating {
         this.elevationButton = document.getElementById('elevation-understand');
         this.clientDirectoryCard = document.getElementById('directory-card');
         this.clientDirectoryPath = document.getElementById('directory-display-path');
+        this.externalPatchWarningClick = document.getElementById('patch-warning-click');
+        this.externalPatchModal = document.getElementById('patchesModal');
+        this.externalPatchInner = document.getElementById('patches-list');
+        this.externalPatchRemoveButton = document.getElementById('patches-remove');
 
         /** Register Callbacks. */
         window.updaterAPI.onStateChanged((state) => { this.onStateChanged(state); });
@@ -58,6 +66,8 @@ export class Updating {
         this.updateButton.addEventListener('click', () => { this.onUpdateButtonClicked(); });
         this.cancelButton.addEventListener('click', () => { this.onCancelButtonClicked(); });
         this.elevationButton.addEventListener('click', () => { window.windowAPI.close(); });
+        this.externalPatchWarningClick.addEventListener('click', () => { this.onExternalPatchesClicked(); });
+        this.externalPatchRemoveButton.addEventListener('click', () => { this.onRemovePatches(); });
 
         /** Download Events. */
         window.updaterAPI.onDownloadStart((filename, remaining, index, total) => { this.onDownloadStart(filename, remaining, index, total); });
@@ -70,6 +80,23 @@ export class Updating {
         document.getElementById('installModal').addEventListener('hidden.bs.modal', function (event) {
             hide(document.getElementById('client-path-error-display'));
         });
+    }
+
+    onExternalPatchesClicked() {
+        console.log('External Patches Clicked');
+    }
+
+    onRemovePatches() {
+        console.log('Remove Patches Clicked');
+
+        let modal = Modal.getInstance(this.externalPatchModal);
+        modal.hide();
+
+        let error = document.getElementById('patch-warning-click');
+        if (error)
+            hide(error);
+
+        window.updaterAPI.onRemovePatches();
     }
 
     /**
